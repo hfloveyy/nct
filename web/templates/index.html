@@ -1,0 +1,50 @@
+{% extends "header.html" %}
+
+
+
+
+{% block container%}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <script type="text/javascript" src="//cdn.socket.io/socket.io-1.4.5.js"></script>
+<script type="text/javascript">
+            $(document).ready(function(){
+                namespace = '/refresh';
+                socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+                socket.on('my response', function(msg) {
+                    console.log('更新: ' + msg.data);
+                    $('#log').empty()
+                    $('#log').append('更新: ' + msg.data + '<br>');
+                });
+
+                $('#background').on('click', function() {
+                    $.get("{{ url_for('refresh') }}");
+                });
+            });
+        </script>
+
+
+        <h3>Logging</h3>
+    <p id="log"></p>
+<button id="background" type="button" class="btn btn-default">更新列表</button>
+
+    <table class="table table-bordered" align="center" valign="middle">
+   <thead>
+      <tr>
+
+         <th>ip地址 </th>
+         <th>mac地址</th>
+
+      </tr>
+   </thead>
+   <tbody>
+      <tr id="ip">
+         <td></td><td></td>
+      </tr>
+
+   </tbody>
+
+</table>
+
+
+{{ list }}
+{% endblock %}
