@@ -4,47 +4,81 @@
 
 
 {% block container%}
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-        <script type="text/javascript" src="//cdn.socket.io/socket.io-1.4.5.js"></script>
-<script type="text/javascript">
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io-1.4.5.js') }}"></script>
+        <script type="text/javascript">
             $(document).ready(function(){
                 namespace = '/refresh';
                 socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
                 socket.on('my response', function(msg) {
                     console.log('更新: ' + msg.data);
-                    $('#log').empty()
-                    $('#log').append('更新: ' + msg.data + '<br>');
+                    $('#log').empty();
+                    $('#log').append(
+                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">" +
+                        "<span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span>" +
+                        "</button><strong>"+msg.data+"</strong>");
                 });
 
+                socket.on('empty', function(msg) {
+                    console.log(msg.data );
+                    $('#ip').empty();
+                });
+                socket.on('list', function(msg) {
+                    console.log('HOST: ' + msg.ip +' up');
+
+                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac +
+                        '</td><td>' + msg.status + '</td></tr>');
+                });
                 $('#background').on('click', function() {
                     $.get("{{ url_for('refresh') }}");
                 });
             });
+            $(document).ready(function(){
+                namespace = '/new';
+                socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+                socket.on('new_host_up', function(msg) {
+                    console.log('new HOST: ' + msg.ip +' up' + '  mac:' + msg.mac)
+                    $('#newhost').empty();
+                    $('#newhost').append('有新主机上线了！ip:' + msg.ip +'  mac:' + msg.mac + '<br>');
+                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac + '</td></tr>');
+                });
+
+            });
         </script>
 
 
-        <h3>Logging</h3>
-    <p id="log"></p>
-<button id="background" type="button" class="btn btn-default">更新列表</button>
+    <h3>主机列表</h3>
+        <button id="background" type="button" class="btn btn-default">更新列表</button>
+
+<div class="btn-group">
+  <button type="button" class="btn btn-default">Left</button>
+  <button type="button" class="btn btn-default">Middle</button>
+  <button type="button" class="btn btn-default">Right</button>
+</div>
+    <div  id="log" class="alert alert-success alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <strong>Warning! update the host list!</strong>
+    </div>
+    <div  id="newhost" class="alert alert-warning alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <strong>Warning! new host up!</strong>
+    </div>
+
 
     <table class="table table-bordered" align="center" valign="middle">
-   <thead>
+    <thead>
       <tr>
-
-         <th>ip地址 </th>
-         <th>mac地址</th>
-
+          <th>ip地址 </th>
+          <th>mac地址</th>
+          <th>状态</th>
       </tr>
-   </thead>
-   <tbody>
-      <tr id="ip">
-         <td></td><td></td>
-      </tr>
+    </thead>
+    <tbody id="ip">
 
-   </tbody>
+    </tbody>
 
-</table>
+    </table>
 
 
-{{ list }}
+
 {% endblock %}

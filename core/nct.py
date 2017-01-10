@@ -1,9 +1,12 @@
-from utils import active_host, get_hostname_by_ip, load_rules
-#from web.main import celery,socketio
-from web import socketio
-import time
-from web.main import celery
+from scapy.all import *
+from utils import active_host, get_hostname_by_ip, load_rules,start_sniff
 
+from web import socketio
+from host import Host
+import json
+import time
+import logging
+logger = logging.getLogger('nct')
 
 class Nct():
     def __init__(self,ip_section = "192.168.1.*",mode = 1):
@@ -11,7 +14,12 @@ class Nct():
         self.rulesname = 'config/rules.json'
         self.hostname_list = []
         self.rules_mode = mode
-        self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
+        #self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
+        self.host_list = []
+        self.ip_list = []
+        self.mac_list = []
+        self.last_packet = None
+        self.hosts = []
 
     def get_host_list(self):
         self.get_host_after_rules()
@@ -19,11 +27,12 @@ class Nct():
 
 
     def refresh_list(self):
-
+        self.hosts = []
         self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
         self.get_host_after_rules()
 
-        return self.host_list,self.ip_list,self.mac_list
+        #return self.host_list,self.ip_list,self.mac_list
+        return self.hosts
 
     def get_hostname_list(self):
         self.hostname_list = []
@@ -42,26 +51,72 @@ class Nct():
 
     def get_host_after_rules(self):
         rules_dict = self.get_rules()
+        print '*'*10
+        print self.host_list
+        print '*'*10
+
         #print rules_dict
         for host in self.host_list:
-            if rules_dict.has_key(host[0]):
-                #print rules_dict[host[0]]
-                #print host[1]
-                if rules_dict[host[0]] == host[1]:
-                    print "host {0} find right mac:{1}!".format(host[0],host[1])
+            if rules_dict.has_key(host[1]) or host[0] in rules_dict.values():
+                if rules_dict[host[1]] == host[0] :
+                    logger.info("ip: {0} match right mac:{1}!".format(host[0],host[1]))
+                    self.hosts.append(Host(host[0],host[1],1))
                 else:
-                    print "host {0} find wrong mac:{1}!".format(host[0], host[1])
+                    self.hosts.append(Host(host[0], host[1], 0))
+                    logger.info("ip: {0} match wrong mac:{1}!".format(host[0],host[1]))
             else:
-                print "{0} is not in rules ".format(host[0])
+                self.hosts.append(Host(host[0], host[1], -1))
+                logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
 
+        print  [host.ip for host in self.hosts]
 
-        pass
 
     def cut_it(self):
         pass
 
+    def packet_callback(self,packet):
+        if self.last_packet is None:
+            self.last_packet = packet
+        if  self.last_packet[ARP].psrc != packet[ARP].psrc or self.last_packet[ARP].hwsrc != packet[ARP].hwsrc:
+            rules_dict = self.get_rules()
+            if (packet[ARP].psrc, packet[ARP].hwsrc) in self.host_list or packet[ARP].hwsrc == 'c8:3a:35:c9:5d:dc' \
+                or packet[ARP].hwsrc == '00:00:00:00:00:00':
+                logger.info('It is not new host :' + packet[ARP].psrc)
+            else:
+                socketio.emit(
+                    'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc}, namespace='/new'
+                )
+                ip = packet[ARP].psrc
+                mac = packet[ARP].hwsrc
+                self.host_list.append((ip, mac))
+
+                if rules_dict.has_key(packet[ARP].hwsrc):
+                    if rules_dict[packet[ARP].hwsrc] == packet[ARP].psrc:
+                        self.hosts.append(Host(ip,mac,1))
+                        logger.info("2. host {0} in rules. mac:{1}!".format(packet[ARP].psrc, packet[ARP].hwsrc))
+                    else:
+                        self.hosts.append(Host(ip, mac, 0))
+                        logger.info("2. host {0} have a wrong ip:{1}!".format(packet[ARP].hwsrc, packet[ARP].psrc))
+                else:
+                    self.hosts.append(Host(ip, mac, -1))
+                    logger.info("2. host {0} is not in rules ,ip is {1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
+                print '+'*10
+                print self.host_list
+                print  [host.ip for host in self.hosts]
+                print '+' * 10
+        else:
+            pass
+            #logger.info("drop the packet mac:{0} ip:{1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
+        self.last_packet = packet
+
+
+    def start_service(self):
+        start_sniff(self.packet_callback)
+
+
+
+
 if __name__ == '__main__':
-    nct = Nct()
-    list = nct.refresh_list()
-    print type(list)
-    print list[0],list[1]
+    nct = Nct("192.168.0.*")
+    #list = nct.refresh_list()
+    nct.start_service()

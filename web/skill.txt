@@ -1,0 +1,6 @@
+WIN + R 打开运行对话框
+arp -a ip 查看ip的mac地址
+ipconfig/ifconfig(linux)查看ip地址等网络信息
+Ctrl +C 复制 Ctrl + V 粘贴
+Vim 是最好的编辑器
+Linux 是个不错的选择！

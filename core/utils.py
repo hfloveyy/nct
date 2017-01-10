@@ -51,6 +51,12 @@ def load_rules(filename):
 def tcp_syn_flood(ip):
     pass
 
+def packet(packet):
+    print packet.show()
+    print packet[ARP].psrc + '  ' + packet[ARP].pdst
+
+def start_sniff(packet_callback):
+    sniff(filter="arp", prn = packet_callback,count=0,store=0)
 
 
 if __name__ == "__main__":
@@ -67,6 +73,7 @@ if __name__ == "__main__":
     #print get_hostname_by_ip("192.168.1.101")
     #for s, r in ans.res:
     #    print r.sprintf("%19s,Ether.src% %ARP.psrc%")
-    load_rules('../config/rules.json')
+    #load_rules('../config/rules.json')
     #print ans2
     #print ans3
+    start_sniff(packet)
