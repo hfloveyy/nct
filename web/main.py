@@ -15,9 +15,6 @@ celery.conf.update(app.config)
 
 from core.tasks import refresh_list,new_host_up
 
-from core.nct import Nct
-
-#nct = Nct("192.168.1.*")
 
 
 
@@ -33,6 +30,8 @@ from core.nct import Nct
 def index():
     refresh_list.delay()
     new_host_up.delay()
+    #refresh_list()
+    #new_host_up()
     return render_template('index.html')
 
 
@@ -41,12 +40,14 @@ def index():
 
 @app.route('/refresh')
 def refresh():
-    refresh_list().delay()
-    return  render_template('index.html')
+    list = refresh_list().delay()
+    #refresh_list()
+    return  list
 
 @app.route('/new')
 def new():
     new_host_up.delay()
+    #new_host_up()
     return  render_template('index.html')
 
 

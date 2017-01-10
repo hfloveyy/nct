@@ -10,75 +10,61 @@
 
     <script type="text/javascript">
             $(document).ready(function(){
-
-                namespace = '/refresh';
-                socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
-                socket.on('my response', function(msg) {
-                    console.log('更新: ' + msg.data);
-                    $('#log').empty();
-                    $('#log').html("<div  class=\"" + msg.status + "\" role=\"alert\">" + msg.data +
-                        "</div>"
-                        );
-                });
-
-                socket.on('empty', function(msg) {
-                    console.log(msg.data );
-                    $('#ip').empty();
-                });
-                socket.on('list', function(msg) {
-                    console.log('HOST: ' + msg.ip +' up');
-
-                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac +
-                        '</td><td>' + msg.status + '</td></tr>');
-                });
-                $('#background').on('click', function() {
-                    $.get("{{ url_for('refresh') }}");
-                });
-                function startRequest() {
-                    $.get("{{ url_for('refresh') }}");
-                }
-                setInterval(function() {
-                    $.get("{{ url_for('refresh') }}");
-                },1000*60*5);
-            });
-            $(document).ready(function(){
                 namespace = '/new';
                 socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
                 socket.on('new_host_up', function(msg) {
                     console.log('new HOST: ' + msg.ip +' up' + '  mac:' + msg.mac)
                     $('#newhost').empty();
                     $('#newhost').append('有新主机上线了！ip:' + msg.ip +'  mac:' + msg.mac + '<br>');
-                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac +
-                        '</td><td>' + msg.status + '</td></tr>');
+                    $('#hosts').bootstrapTable('append',msg);
                 });
-
             });
 
 
 
     </script>
     <script type="text/javascript">
-        $('#table1').bootstrapTable({
-            columns: [{
-                field: 'id',
-                title: 'Item ID'
-            }, {
-                field: 'name',
-                title: 'Item Name'
-            }, {
-                field: 'price',
-                title: 'Item Price'
-            }],
-            data: [{
-                id: 1,
-                name: 'Item 1',
-                price: '$1'
-            }, {
-                id: 2,
-                name: 'Item 2',
-                price: '$2'
-            }]
-});
+        $(document).ready(function () {
+            $('#hosts').bootstrapTable({
+                method: "get",
+                url:"/refresh",
+                pagination: true,
+                showRefresh: true,
+
+                icons: {
+                    refresh: 'glyphicon-repeat',
+                    toggle: 'glyphicon-list-alt',
+                    columns: 'glyphicon-list'
+                },
+                columns: [{
+                    field: 'ip',
+                    title: 'IP 地址'
+                }, {
+                    field: 'mac',
+                    title: 'MAC 地址'
+                }, {
+                    field: 'status',
+                    title: '状态'
+                }]
+
+            });
+
+        });
+        $(document).ready(function () {
+            namespace = '/refresh';
+            socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+            socket.on('list', function(msg) {
+                    console.log('HOST up!' + msg[0].ip);
+                    $('#hosts').bootstrapTable('load',msg);
+            });
+            setInterval(function() {
+                    $.get("{{ url_for('refresh') }}");
+            },1000*60*5);
+        });
+
+
+
+
 
     </script>
 
@@ -110,8 +96,18 @@
 
     </table>
 
-    <table id="table1"></table>
+    <table id="hosts">
+    <thead>
+      <tr>
+          <th>ip地址 </th>
+          <th>mac地址</th>
+          <th>状态</th>
+      </tr>
+    </thead>
+    </table>
 
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
 
 
 {% endblock %}

@@ -5,6 +5,7 @@ import time
 from web.main import celery
 import logging
 from nct import Nct
+from flask import jsonify
 
 nct = Nct(app.config['IP_SECTION'])
 #nct = Nct("192.168.0.*")
@@ -15,21 +16,24 @@ def refresh_list():
     socketio.emit(
         'my response',{'data':'刷新列表......','status':'alert alert-warning'},namespace = '/refresh'
     )
+    data = []
     #time.sleep(15)
     #host_list, ip_list, mac_list = nct.refresh_list()
     host_list = nct.refresh_list()
+    for host in host_list:
+        data.append({'ip':host.ip,'mac':host.mac,'status':host.cut})
     socketio.emit(
         'empty', {'data': '清空table'}, namespace='/refresh'
     )
-    for host in host_list:
-        socketio.emit(
-        'list', {'ip':host.ip,'mac': host.mac,'status':host.cut}, namespace='/refresh'
+    socketio.emit(
+        'list', data, namespace='/refresh'
     )
-
 
     socketio.emit(
         'my response', {'data': '刷新列表完成','status':'alert alert-success'}, namespace='/refresh'
     )
+
+
 
 @celery.task
 def new_host_up():
