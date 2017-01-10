@@ -35,13 +35,7 @@ def index():
     new_host_up.delay()
     return render_template('index.html')
 
-    #nct.get_rules()
-    #host_list = nct.get_host_list()
-    #hostname_list = nct.get_hostname_list()
 
-    #return 'Hello World!'
-
-    #return render_template('celery.html')
 
 
 

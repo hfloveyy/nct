@@ -13,7 +13,7 @@ nct = Nct(app.config['IP_SECTION'])
 @celery.task
 def refresh_list():
     socketio.emit(
-        'my response',{'data':'刷新列表...'},namespace = '/refresh'
+        'my response',{'data':'刷新列表......','status':'alert alert-warning'},namespace = '/refresh'
     )
     #time.sleep(15)
     #host_list, ip_list, mac_list = nct.refresh_list()
@@ -21,7 +21,6 @@ def refresh_list():
     socketio.emit(
         'empty', {'data': '清空table'}, namespace='/refresh'
     )
-
     for host in host_list:
         socketio.emit(
         'list', {'ip':host.ip,'mac': host.mac,'status':host.cut}, namespace='/refresh'
@@ -29,13 +28,16 @@ def refresh_list():
 
 
     socketio.emit(
-        'my response', {'data': '刷新列表完成'}, namespace='/refresh'
+        'my response', {'data': '刷新列表完成','status':'alert alert-success'}, namespace='/refresh'
     )
 
 @celery.task
 def new_host_up():
     time.sleep(15)
     nct.start_service()
+
+
+
 
 
 

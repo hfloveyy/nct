@@ -28,9 +28,9 @@ class Nct():
 
     def refresh_list(self):
         self.hosts = []
-        self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
+        #self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
+        self.host_list= active_host(self.ip_section)
         self.get_host_after_rules()
-
         #return self.host_list,self.ip_list,self.mac_list
         return self.hosts
 
@@ -51,11 +51,6 @@ class Nct():
 
     def get_host_after_rules(self):
         rules_dict = self.get_rules()
-        print '*'*10
-        print self.host_list
-        print '*'*10
-
-        #print rules_dict
         for host in self.host_list:
             if rules_dict.has_key(host[1]) or host[0] in rules_dict.values():
                 if rules_dict[host[1]] == host[0] :
@@ -68,7 +63,6 @@ class Nct():
                 self.hosts.append(Host(host[0], host[1], -1))
                 logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
 
-        print  [host.ip for host in self.hosts]
 
 
     def cut_it(self):
@@ -80,12 +74,9 @@ class Nct():
         if  self.last_packet[ARP].psrc != packet[ARP].psrc or self.last_packet[ARP].hwsrc != packet[ARP].hwsrc:
             rules_dict = self.get_rules()
             if (packet[ARP].psrc, packet[ARP].hwsrc) in self.host_list or packet[ARP].hwsrc == 'c8:3a:35:c9:5d:dc' \
-                or packet[ARP].hwsrc == '00:00:00:00:00:00':
-                logger.info('It is not new host :' + packet[ARP].psrc)
+                or packet[ARP].hwsrc == '00:00:00:00:00:00' or packet[ARP].psrc == '0.0.0.0':
+                logger.info('pass the host :' + packet[ARP].psrc + ' mac : ' + packet[ARP].hwsrc)
             else:
-                socketio.emit(
-                    'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc}, namespace='/new'
-                )
                 ip = packet[ARP].psrc
                 mac = packet[ARP].hwsrc
                 self.host_list.append((ip, mac))
@@ -100,10 +91,9 @@ class Nct():
                 else:
                     self.hosts.append(Host(ip, mac, -1))
                     logger.info("2. host {0} is not in rules ,ip is {1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
-                print '+'*10
-                print self.host_list
-                print  [host.ip for host in self.hosts]
-                print '+' * 10
+                socketio.emit(
+                    'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc,'status':self.hosts[-1].cut}, namespace='/new'
+                )
         else:
             pass
             #logger.info("drop the packet mac:{0} ip:{1}".format(packet[ARP].hwsrc, packet[ARP].psrc))

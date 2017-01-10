@@ -1,0 +1,117 @@
+Tue, 10 Jan 2017 15:59:40 server.py[line:111] INFO Server initialized for eventlet.
+Tue, 10 Jan 2017 15:59:40 error.py[line:59] WARNING No route found for IPv6 destination :: (no default route?)
+Tue, 10 Jan 2017 15:59:41 _internal.py[line:87] WARNING  * Debugger is active!
+Tue, 10 Jan 2017 15:59:41 _internal.py[line:87] INFO  * Debugger pin code: 311-664-442
+Tue, 10 Jan 2017 15:59:50 connection.py[line:350] DEBUG Start from server, version: 0.9, properties: {'information': 'Licensed under the MPL.  See http://www.rabbitmq.com/', 'product': 'RabbitMQ', 'copyright': 'Copyright (C) 2007-2015 Pivotal Software, Inc.', 'capabilities': {'exchange_exchange_bindings': True, 'connection.blocked': True, 'authentication_failure_close': True, 'basic.nack': True, 'per_consumer_qos': True, 'consumer_priorities': True, 'consumer_cancel_notify': True, 'publisher_confirms': True}, 'cluster_name': 'rabbit@hf', 'platform': 'Erlang/OTP', 'version': '3.5.7'}, mechanisms: [u'PLAIN', u'AMQPLAIN'], locales: [u'en_US']
+Tue, 10 Jan 2017 15:59:50 channel.py[line:122] DEBUG using channel_id: 1
+Tue, 10 Jan 2017 15:59:50 channel.py[line:459] DEBUG Channel open
+Tue, 10 Jan 2017 15:59:50 pubsub_manager.py[line:37] INFO redis backend initialized.
+Tue, 10 Jan 2017 15:59:50 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '72fe902d5b4b410f93c783d1f931ef4c'}
+Tue, 10 Jan 2017 15:59:50 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 15:59:50 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 15:59:50 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 15:59:50 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 15:59:50 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 15:59:50 socket.py[line:79] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received request to upgrade to websocket
+Tue, 10 Jan 2017 15:59:50 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet NOOP data None
+Tue, 10 Jan 2017 15:59:50 socket.py[line:174] INFO 72fe902d5b4b410f93c783d1f931ef4c: Upgrade to websocket successful
+Tue, 10 Jan 2017 16:00:15 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet PING data None
+Tue, 10 Jan 2017 16:00:15 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet PONG data None
+Tue, 10 Jan 2017 16:00:40 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet PING data None
+Tue, 10 Jan 2017 16:00:40 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet PONG data None
+Tue, 10 Jan 2017 16:01:05 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet PING data None
+Tue, 10 Jan 2017 16:01:05 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet PONG data None
+Tue, 10 Jan 2017 16:01:30 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet PING data None
+Tue, 10 Jan 2017 16:01:30 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet PONG data None
+Tue, 10 Jan 2017 16:01:55 socket.py[line:44] INFO 72fe902d5b4b410f93c783d1f931ef4c: Received packet PING data None
+Tue, 10 Jan 2017 16:01:55 socket.py[line:69] INFO 72fe902d5b4b410f93c783d1f931ef4c: Sending packet PONG data None
+Tue, 10 Jan 2017 16:02:16 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': 'eb218ac8e004469783bbe7184e5ae32d'}
+Tue, 10 Jan 2017 16:02:16 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 16:02:16 socket.py[line:44] INFO eb218ac8e004469783bbe7184e5ae32d: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:02:16 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:02:16 socket.py[line:44] INFO eb218ac8e004469783bbe7184e5ae32d: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:02:16 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:02:16 socket.py[line:79] INFO eb218ac8e004469783bbe7184e5ae32d: Received request to upgrade to websocket
+Tue, 10 Jan 2017 16:02:16 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet NOOP data None
+Tue, 10 Jan 2017 16:02:16 socket.py[line:174] INFO eb218ac8e004469783bbe7184e5ae32d: Upgrade to websocket successful
+Tue, 10 Jan 2017 16:02:41 socket.py[line:44] INFO eb218ac8e004469783bbe7184e5ae32d: Received packet PING data None
+Tue, 10 Jan 2017 16:02:41 socket.py[line:69] INFO eb218ac8e004469783bbe7184e5ae32d: Sending packet PONG data None
+Tue, 10 Jan 2017 16:03:02 socket.py[line:69] INFO 2e9fdf874ef740f9ada3568d91682423: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '2e9fdf874ef740f9ada3568d91682423'}
+Tue, 10 Jan 2017 16:03:02 socket.py[line:69] INFO 2e9fdf874ef740f9ada3568d91682423: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 16:03:02 socket.py[line:44] INFO 2e9fdf874ef740f9ada3568d91682423: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:03:02 socket.py[line:69] INFO 2e9fdf874ef740f9ada3568d91682423: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:03:02 socket.py[line:44] INFO 2e9fdf874ef740f9ada3568d91682423: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:03:02 socket.py[line:69] INFO 2e9fdf874ef740f9ada3568d91682423: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:03:03 socket.py[line:79] INFO 2e9fdf874ef740f9ada3568d91682423: Received request to upgrade to websocket
+Tue, 10 Jan 2017 16:03:03 socket.py[line:69] INFO 2e9fdf874ef740f9ada3568d91682423: Sending packet NOOP data None
+Tue, 10 Jan 2017 16:04:03 socket.py[line:62] INFO 2e9fdf874ef740f9ada3568d91682423: Client is gone, closing socket
+Tue, 10 Jan 2017 16:04:03 socket.py[line:149] INFO 2e9fdf874ef740f9ada3568d91682423: Failed websocket upgrade, expected UPGRADE packet, received None instead.
+Tue, 10 Jan 2017 16:04:04 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': 'a556919392eb4ec7b91835dd2521b161'}
+Tue, 10 Jan 2017 16:04:04 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 16:04:04 socket.py[line:44] INFO a556919392eb4ec7b91835dd2521b161: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:04:04 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:04:04 socket.py[line:44] INFO a556919392eb4ec7b91835dd2521b161: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:04:04 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:04:04 socket.py[line:79] INFO a556919392eb4ec7b91835dd2521b161: Received request to upgrade to websocket
+Tue, 10 Jan 2017 16:04:04 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet NOOP data None
+Tue, 10 Jan 2017 16:04:04 socket.py[line:174] INFO a556919392eb4ec7b91835dd2521b161: Upgrade to websocket successful
+Tue, 10 Jan 2017 16:04:29 socket.py[line:44] INFO a556919392eb4ec7b91835dd2521b161: Received packet PING data None
+Tue, 10 Jan 2017 16:04:29 socket.py[line:69] INFO a556919392eb4ec7b91835dd2521b161: Sending packet PONG data None
+Tue, 10 Jan 2017 16:04:35 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '7f4e6b75e30642e2b5c409b74a51d7bd'}
+Tue, 10 Jan 2017 16:04:35 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 16:04:35 socket.py[line:44] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:04:35 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:04:35 socket.py[line:44] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:04:35 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:04:35 socket.py[line:79] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Received request to upgrade to websocket
+Tue, 10 Jan 2017 16:04:35 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet NOOP data None
+Tue, 10 Jan 2017 16:04:35 socket.py[line:174] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Upgrade to websocket successful
+Tue, 10 Jan 2017 16:05:00 socket.py[line:44] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Received packet PING data None
+Tue, 10 Jan 2017 16:05:00 socket.py[line:69] INFO 7f4e6b75e30642e2b5c409b74a51d7bd: Sending packet PONG data None
+Tue, 10 Jan 2017 16:05:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '1410cc6858ae4ff2a6d93fcbb4f7ad15'}
+Tue, 10 Jan 2017 16:05:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 0
+Tue, 10 Jan 2017 16:05:08 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:05:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 0/refresh
+Tue, 10 Jan 2017 16:05:08 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:05:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 0/new
+Tue, 10 Jan 2017 16:05:08 socket.py[line:79] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received request to upgrade to websocket
+Tue, 10 Jan 2017 16:05:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet NOOP data None
+Tue, 10 Jan 2017 16:05:08 socket.py[line:174] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Upgrade to websocket successful
+Tue, 10 Jan 2017 16:05:33 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:05:33 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:05:58 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:05:58 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:06:23 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:06:23 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:06:48 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:06:48 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:07:13 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:07:13 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:07:38 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:07:38 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:08:03 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:08:03 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:08:28 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:08:28 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:08:53 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:08:53 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:09:18 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:09:18 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:09:43 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:09:43 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:10:08 server.py[line:215] INFO emitting event "my response" to all [/refresh]
+Tue, 10 Jan 2017 16:10:08 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:10:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None
+Tue, 10 Jan 2017 16:10:08 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 2/refresh,["my response",{"status":"alert alert-warning","data":"\u5237\u65b0\u5217\u8868......"}]
+Tue, 10 Jan 2017 16:10:10 nct.py[line:64] INFO ip 192.168.0.1: is not in rules ,ip is bc:46:99:2a:90:ee
+Tue, 10 Jan 2017 16:10:10 nct.py[line:64] INFO ip 192.168.0.118: is not in rules ,ip is dc:37:14:16:df:0a
+Tue, 10 Jan 2017 16:10:10 server.py[line:215] INFO emitting event "empty" to all [/refresh]
+Tue, 10 Jan 2017 16:10:10 server.py[line:215] INFO emitting event "list" to all [/refresh]
+Tue, 10 Jan 2017 16:10:10 server.py[line:215] INFO emitting event "list" to all [/refresh]
+Tue, 10 Jan 2017 16:10:10 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 2/refresh,["empty",{"data":"\u6e05\u7a7atable"}]
+Tue, 10 Jan 2017 16:10:10 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 2/refresh,["list",{"status":-1,"ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"}]
+Tue, 10 Jan 2017 16:10:10 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 2/refresh,["list",{"status":-1,"ip":"192.168.0.118","mac":"dc:37:14:16:df:0a"}]
+Tue, 10 Jan 2017 16:10:10 server.py[line:215] INFO emitting event "my response" to all [/refresh]
+Tue, 10 Jan 2017 16:10:10 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet MESSAGE data 2/refresh,["my response",{"status":"alert alert-success","data":"\u5237\u65b0\u5217\u8868\u5b8c\u6210"}]
+Tue, 10 Jan 2017 16:10:33 socket.py[line:44] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Received packet PING data None
+Tue, 10 Jan 2017 16:10:33 socket.py[line:69] INFO 1410cc6858ae4ff2a6d93fcbb4f7ad15: Sending packet PONG data None

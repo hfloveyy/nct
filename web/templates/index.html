@@ -3,20 +3,22 @@
 
 
 
+
+
 {% block container%}
 
-        <script type="text/javascript" src="{{ url_for('static', filename='js/socket.io-1.4.5.js') }}"></script>
-        <script type="text/javascript">
+
+    <script type="text/javascript">
             $(document).ready(function(){
+
                 namespace = '/refresh';
                 socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
                 socket.on('my response', function(msg) {
                     console.log('更新: ' + msg.data);
                     $('#log').empty();
-                    $('#log').append(
-                        "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">" +
-                        "<span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span>" +
-                        "</button><strong>"+msg.data+"</strong>");
+                    $('#log').html("<div  class=\"" + msg.status + "\" role=\"alert\">" + msg.data +
+                        "</div>"
+                        );
                 });
 
                 socket.on('empty', function(msg) {
@@ -32,6 +34,12 @@
                 $('#background').on('click', function() {
                     $.get("{{ url_for('refresh') }}");
                 });
+                function startRequest() {
+                    $.get("{{ url_for('refresh') }}");
+                }
+                setInterval(function() {
+                    $.get("{{ url_for('refresh') }}");
+                },1000*60*5);
             });
             $(document).ready(function(){
                 namespace = '/new';
@@ -40,29 +48,52 @@
                     console.log('new HOST: ' + msg.ip +' up' + '  mac:' + msg.mac)
                     $('#newhost').empty();
                     $('#newhost').append('有新主机上线了！ip:' + msg.ip +'  mac:' + msg.mac + '<br>');
-                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac + '</td></tr>');
+                    $('#ip').append('<tr><td>'+msg.ip +'</td>'+ '<td>' + msg.mac +
+                        '</td><td>' + msg.status + '</td></tr>');
                 });
 
             });
-        </script>
+
+
+
+    </script>
+    <script type="text/javascript">
+        $('#table1').bootstrapTable({
+            columns: [{
+                field: 'id',
+                title: 'Item ID'
+            }, {
+                field: 'name',
+                title: 'Item Name'
+            }, {
+                field: 'price',
+                title: 'Item Price'
+            }],
+            data: [{
+                id: 1,
+                name: 'Item 1',
+                price: '$1'
+            }, {
+                id: 2,
+                name: 'Item 2',
+                price: '$2'
+            }]
+});
+
+    </script>
+
 
 
     <h3>主机列表</h3>
         <button id="background" type="button" class="btn btn-default">更新列表</button>
 
-<div class="btn-group">
-  <button type="button" class="btn btn-default">Left</button>
-  <button type="button" class="btn btn-default">Middle</button>
-  <button type="button" class="btn btn-default">Right</button>
-</div>
-    <div  id="log" class="alert alert-success alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <strong>Warning! update the host list!</strong>
-    </div>
-    <div  id="newhost" class="alert alert-warning alert-dismissible" role="alert">
-        <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <strong>Warning! new host up!</strong>
-    </div>
+
+        <div id='log'></div>
+        <div id='log2'></div>
+        <div  id="newhost" class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <strong>Warning! new host up!</strong>
+        </div>
 
 
     <table class="table table-bordered" align="center" valign="middle">
@@ -78,6 +109,8 @@
     </tbody>
 
     </table>
+
+    <table id="table1"></table>
 
 
 

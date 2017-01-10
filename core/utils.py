@@ -9,7 +9,7 @@ def active_host(ip_section):
     #print ip_list
     #print '*'*10
     #print mac_list
-    return host_list,ip_list,mac_list
+    return host_list#,ip_list,mac_list
 
 
 
