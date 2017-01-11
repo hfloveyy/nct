@@ -20,6 +20,9 @@ class Nct():
         self.mac_list = []
         self.last_packet = None
         self.hosts = []
+        self.ip_format = self.ip_section[0:-1]+'0/24'
+
+
 
     def get_host_list(self):
         self.get_host_after_rules()
@@ -66,7 +69,7 @@ class Nct():
 
 
     def cut_it(self):
-        pass
+        print "cut it now!"
 
     def packet_callback(self,packet):
         if self.last_packet is None:
@@ -101,12 +104,12 @@ class Nct():
 
 
     def start_service(self):
-        start_sniff(self.packet_callback)
+        start_sniff(self.packet_callback,self.ip_format)
 
 
 
 
 if __name__ == '__main__':
-    nct = Nct("192.168.0.*")
+    nct = Nct("192.168.1.*")
     #list = nct.refresh_list()
     nct.start_service()

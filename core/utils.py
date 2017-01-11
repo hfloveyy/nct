@@ -55,8 +55,9 @@ def packet(packet):
     print packet.show()
     print packet[ARP].psrc + '  ' + packet[ARP].pdst
 
-def start_sniff(packet_callback):
-    sniff(filter="arp", prn = packet_callback,count=0,store=0)
+def start_sniff(packet_callback,IPSECTION):
+
+    sniff(filter= "arp and net {0}".format(IPSECTION), prn = packet_callback,count=0,store=0)
 
 
 if __name__ == "__main__":
@@ -76,4 +77,5 @@ if __name__ == "__main__":
     #load_rules('../config/rules.json')
     #print ans2
     #print ans3
-    start_sniff(packet)
+    #start_sniff(packet)
+    print 'aa'

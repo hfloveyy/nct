@@ -40,6 +40,10 @@ def new_host_up():
     time.sleep(15)
     nct.start_service()
 
+@celery.task
+def cut_it():
+    nct.cut_it()
+
 
 
 

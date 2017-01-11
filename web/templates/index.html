@@ -14,9 +14,7 @@
                 socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
                 socket.on('new_host_up', function(msg) {
                     console.log('new HOST: ' + msg.ip +' up' + '  mac:' + msg.mac)
-                    $('#newhost').empty();
-                    $('#newhost').append('有新主机上线了！ip:' + msg.ip +'  mac:' + msg.mac + '<br>');
-                    $('#hosts').bootstrapTable('append',msg);
+                    $('#hosts').bootstrapTable('prepend',msg);
                 });
             });
 
@@ -25,31 +23,88 @@
     </script>
     <script type="text/javascript">
         $(document).ready(function () {
+            $("#table").bootstrapTable('destroy');
             $('#hosts').bootstrapTable({
                 method: "get",
                 url:"/refresh",
                 pagination: true,
                 showRefresh: true,
-
+                cache: false,
+                pageNumber: 1,                       //初始化加载第一页，默认第一页
+                pageSize: 10,                       //每页的记录行数（*）
+                pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+                showToggle: true,
+                striped:true,
+                search:true,
+                showToggle:true,
                 icons: {
                     refresh: 'glyphicon-repeat',
                     toggle: 'glyphicon-list-alt',
                     columns: 'glyphicon-list'
                 },
+                rowStyle: function (row, index) {
+                    //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
+                    var strclass = "";
+                    if (row.status == "1") {
+                        strclass = 'active';//还有一个active
+                    }
+                    else if (row.status == "-1") {
+                        strclass = 'info';
+                    }
+                    else if (row.status == "0") {
+                        strclass = 'warning'
+                    }
+                    else {
+                        return {};
+                    }
+                    return { classes: strclass }
+                },
                 columns: [{
                     field: 'ip',
-                    title: 'IP 地址'
+                    title: 'IP 地址',
+                    align: 'center'
                 }, {
                     field: 'mac',
-                    title: 'MAC 地址'
+                    title: 'MAC 地址',
+                    align: 'center'
                 }, {
                     field: 'status',
-                    title: '状态'
-                }]
+                    title: '状态',
+                    align: 'center'
+                }, {
+                    field: 'operate',
+                    title: '操作',
+                    align: 'center',
+                    events: operateEvents,
+                    formatter: operateFormatter
+                }
+
+                ],
+
+                onClickRow: function (item, $element) {
+                    console.log('click the row'+item.ip)
+                    return false;
+                }
 
             });
 
+
         });
+        function operateFormatter(value, row, index) {
+                return [
+                '<button type="button" class="Cut btn btn-default  btn-sm active" style="margin-right:15px;">断网</button>',
+                '<button type="button" class="Edit btn btn-default  btn-sm active" style="margin-right:15px;">加入策略</button>'
+                ].join('');
+                }
+        window.operateEvents = {
+                    'click .Cut': function (e, value, row, index) {
+                        //alert(row.ip);
+                        $.get("{{ url_for('cut') }}");
+                        $('.Cut').text('断网中.....')
+                    }, 'click .Edit': function (e, value, row, index) {
+                        alert(row.status);
+                    }
+        }
         $(document).ready(function () {
             namespace = '/refresh';
             socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
@@ -57,6 +112,9 @@
                     console.log('HOST up!' + msg[0].ip);
                     $('#hosts').bootstrapTable('load',msg);
             });
+
+        });
+        $(document).ready(function () {
             setInterval(function() {
                     $.get("{{ url_for('refresh') }}");
             },1000*60*5);
@@ -70,31 +128,9 @@
 
 
 
-    <h3>主机列表</h3>
-        <button id="background" type="button" class="btn btn-default">更新列表</button>
 
 
-        <div id='log'></div>
-        <div id='log2'></div>
-        <div  id="newhost" class="alert alert-warning alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <strong>Warning! new host up!</strong>
-        </div>
 
-
-    <table class="table table-bordered" align="center" valign="middle">
-    <thead>
-      <tr>
-          <th>ip地址 </th>
-          <th>mac地址</th>
-          <th>状态</th>
-      </tr>
-    </thead>
-    <tbody id="ip">
-
-    </tbody>
-
-    </table>
 
     <table id="hosts">
     <thead>
