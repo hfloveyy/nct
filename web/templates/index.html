@@ -7,10 +7,10 @@
 
 {% block container%}
 
-
+<a class="btn btn-primary btn-lg" href="/new" role="button">启动嗅探</a>
     <script type="text/javascript">
             $(document).ready(function(){
-                namespace = '/new';
+                namespace = '/newone';
                 socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
                 socket.on('new_host_up', function(msg) {
                     console.log('new HOST: ' + msg.ip +' up' + '  mac:' + msg.mac)
@@ -45,13 +45,13 @@
                 rowStyle: function (row, index) {
                     //这里有5个取值代表5中颜色['active', 'success', 'info', 'warning', 'danger'];
                     var strclass = "";
-                    if (row.status == "1") {
+                    if (row.status == "在白名单中") {
                         strclass = 'active';//还有一个active
                     }
-                    else if (row.status == "-1") {
+                    else if (row.status == "不在白名单中") {
                         strclass = 'info';
                     }
-                    else if (row.status == "0") {
+                    else if (row.status == "与白名单不符") {
                         strclass = 'warning'
                     }
                     else {
@@ -82,7 +82,7 @@
                 ],
 
                 onClickRow: function (item, $element) {
-                    console.log('click the row'+item.ip)
+                    //console.log('click the row'+item.ip)
                     return false;
                 }
 
@@ -92,17 +92,41 @@
         });
         function operateFormatter(value, row, index) {
                 return [
-                '<button type="button" class="Cut btn btn-default  btn-sm active" style="margin-right:15px;">断网</button>',
-                '<button type="button" class="Edit btn btn-default  btn-sm active" style="margin-right:15px;">加入策略</button>'
+                    '<button type="button" class="Cut btn btn-default  btn-sm active" style="margin-right:15px;" data-loading-text="断网中...">断网</button>',
+                    '<button type="button" class="Listen btn btn-default  btn-sm active" style="margin-right:15px;" data-loading-text="监听中...">监听</button>',
+                    '<button type="button" class="Edit btn btn-default  btn-sm active" style="margin-right:15px;">加入白名单</button>'
+
                 ].join('');
                 }
         window.operateEvents = {
                     'click .Cut': function (e, value, row, index) {
                         //alert(row.ip);
-                        $.get("{{ url_for('cut') }}");
-                        $('.Cut').text('断网中.....')
+                        $.post("{{ url_for('cut') }}",{ip:row.ip,mac:row.mac},function (result) {
+
+                        });
+                        $(this).button('断网中.....')
+                    }, 'click .Listen': function (e, value, row, index) {
+                            $(e).button('loading')
+                            $.post("{{ url_for('listen') }}",{ip:row.ip},function (result) {
+                                console.log(result)
+                                if(result == 'true'){
+                                    //alert("保存数据包成功！");
+                                    $(e).button('reset')
+                                }else {
+                                    //alert("保存数据包失败！");
+                                    $(e).button('reset')
+
+                                }
+                            });
                     }, 'click .Edit': function (e, value, row, index) {
-                        alert(row.status);
+                        $.post("{{ url_for('policy') }}",{ip:row.ip,mac:row.mac},function(result){
+                            if(result == 'true'){
+                                alert("加入白名单成功！");
+                            }else {
+                                alert("加入白名单失败，已在白名单中");
+                            }
+
+                        });
                     }
         }
         $(document).ready(function () {
@@ -110,6 +134,7 @@
             socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
             socket.on('list', function(msg) {
                     console.log('HOST up!' + msg[0].ip);
+                    $('#hosts').empty();
                     $('#hosts').bootstrapTable('load',msg);
             });
 

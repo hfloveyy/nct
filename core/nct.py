@@ -1,12 +1,18 @@
+# -*- coding:utf-8 -*-
 from scapy.all import *
-from utils import active_host, get_hostname_by_ip, load_rules,start_sniff
+from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp
 
 from web import socketio
 from host import Host
 import json
 import time
+
+
 import logging
 logger = logging.getLogger('nct')
+
+
+
 
 class Nct():
     def __init__(self,ip_section = "192.168.1.*",mode = 1):
@@ -24,13 +30,13 @@ class Nct():
 
 
 
+
     def get_host_list(self):
         self.get_host_after_rules()
         return self.host_list
 
 
     def refresh_list(self):
-        self.hosts = []
         #self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
         self.host_list= active_host(self.ip_section)
         self.get_host_after_rules()
@@ -53,18 +59,20 @@ class Nct():
 
 
     def get_host_after_rules(self):
+        self.hosts = []
         rules_dict = self.get_rules()
         for host in self.host_list:
             if rules_dict.has_key(host[1]) or host[0] in rules_dict.values():
                 if rules_dict[host[1]] == host[0] :
                     logger.info("ip: {0} match right mac:{1}!".format(host[0],host[1]))
-                    self.hosts.append(Host(host[0],host[1],1))
+                    self.hosts.append(Host(host[0],host[1],'在白名单中'))
                 else:
-                    self.hosts.append(Host(host[0], host[1], 0))
+                    self.hosts.append(Host(host[0], host[1], '与白名单不符'))
                     logger.info("ip: {0} match wrong mac:{1}!".format(host[0],host[1]))
             else:
-                self.hosts.append(Host(host[0], host[1], -1))
+                self.hosts.append(Host(host[0], host[1], '不在白名单中'))
                 logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
+        print len(self.hosts)
 
 
 
@@ -78,7 +86,8 @@ class Nct():
             rules_dict = self.get_rules()
             if (packet[ARP].psrc, packet[ARP].hwsrc) in self.host_list or packet[ARP].hwsrc == 'c8:3a:35:c9:5d:dc' \
                 or packet[ARP].hwsrc == '00:00:00:00:00:00' or packet[ARP].psrc == '0.0.0.0':
-                logger.info('pass the host :' + packet[ARP].psrc + ' mac : ' + packet[ARP].hwsrc)
+                #logger.info('pass the host :' + packet[ARP].psrc + ' mac : ' + packet[ARP].hwsrc)
+                pass
             else:
                 ip = packet[ARP].psrc
                 mac = packet[ARP].hwsrc
@@ -86,30 +95,55 @@ class Nct():
 
                 if rules_dict.has_key(packet[ARP].hwsrc):
                     if rules_dict[packet[ARP].hwsrc] == packet[ARP].psrc:
-                        self.hosts.append(Host(ip,mac,1))
+                        self.hosts.append(Host(ip,mac,'在白名单中'))
                         logger.info("2. host {0} in rules. mac:{1}!".format(packet[ARP].psrc, packet[ARP].hwsrc))
                     else:
-                        self.hosts.append(Host(ip, mac, 0))
+                        self.hosts.append(Host(ip, mac, '与白名单不符'))
                         logger.info("2. host {0} have a wrong ip:{1}!".format(packet[ARP].hwsrc, packet[ARP].psrc))
                 else:
-                    self.hosts.append(Host(ip, mac, -1))
+                    self.hosts.append(Host(ip, mac, '不在白名单中'))
                     logger.info("2. host {0} is not in rules ,ip is {1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
                 socketio.emit(
-                    'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc,'status':self.hosts[-1].cut}, namespace='/new'
+                    'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc,'status':self.hosts[-1].cut}, namespace='/newone'
                 )
         else:
+            #丢弃同一主机ARP包
             pass
             #logger.info("drop the packet mac:{0} ip:{1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
         self.last_packet = packet
 
 
     def start_service(self):
-        start_sniff(self.packet_callback,self.ip_format)
+        start_sniff_arp(self.packet_callback,self.ip_format)
+
+
+    def listen(self,host_ip):
+        packets = sniff(filter="ip host {0}".format(host_ip), count=10)
+        print len(packets[IP])
+        if len(packets[IP])>0:
+            wrpcap('listen_data.pcap',packets)
+            return True
+        return False
+
+    def policy(self,host_ip,host_mac):
+        new_policy = None
+        value = False
+        with open('config/rules.json',"r") as f:
+            old_policy = json.load(f)
+            if old_policy.has_key(host_mac):
+                return False
+            new = {host_mac:host_ip}
+            new_policy = dict(old_policy,**new)
+        with open('config/rules.json',"w") as f:
+            json.dump(new_policy,f)
+            value = True
+        return value
 
 
 
 
 if __name__ == '__main__':
-    nct = Nct("192.168.1.*")
+    pass
+    #nct = Nct("192.168.1.*")
     #list = nct.refresh_list()
-    nct.start_service()
+    #nct.start_service()

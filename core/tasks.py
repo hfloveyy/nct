@@ -8,41 +8,50 @@ from nct import Nct
 from flask import jsonify
 
 nct = Nct(app.config['IP_SECTION'])
+
 #nct = Nct("192.168.0.*")
 #nct = Nct("10.2.10.*")
 
 @celery.task
 def refresh_list():
+    '''
     socketio.emit(
         'my response',{'data':'刷新列表......','status':'alert alert-warning'},namespace = '/refresh'
     )
+    '''
     data = []
     #time.sleep(15)
     #host_list, ip_list, mac_list = nct.refresh_list()
     host_list = nct.refresh_list()
     for host in host_list:
         data.append({'ip':host.ip,'mac':host.mac,'status':host.cut})
-    socketio.emit(
-        'empty', {'data': '清空table'}, namespace='/refresh'
-    )
+    print data[0]['ip']
     socketio.emit(
         'list', data, namespace='/refresh'
     )
-
+    '''
     socketio.emit(
         'my response', {'data': '刷新列表完成','status':'alert alert-success'}, namespace='/refresh'
     )
-
-
+    '''
 
 @celery.task
 def new_host_up():
-    time.sleep(15)
+    time.sleep(10)
     nct.start_service()
 
 @celery.task
-def cut_it():
+def cut_it(ip,mac):
     nct.cut_it()
+
+
+@celery.task
+def listening(ip):
+    return nct.listen(ip)
+
+
+def write_policy(ip,mac):
+    return nct.policy(ip,mac)
 
 
 
