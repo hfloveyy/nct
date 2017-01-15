@@ -8,6 +8,7 @@
 {% block container%}
 
 <a class="new btn btn-primary btn-lg" href="/new" role="button">启动嗅探</a>
+
     <script type="text/javascript">
             $(document).ready(function(){
                 namespace = '/newone';
@@ -92,6 +93,7 @@
         });
         function operateFormatter(value, row, index) {
                 return [
+                    '<input type="checkbox" name="my-checkbox" checked>',
                     '<input checked data-toggle="toggle" type="checkbox">',
                     '<button type="button" class="Cut btn btn-default  btn-sm active" style="margin-right:15px;" data-loading-text="断网中..." data-toggle="toggle">断网</button>',
                     '<button type="button" class="Listen btn btn-default  btn-sm active" style="margin-right:15px;" data-loading-text="start" data-toggle="toggle">监听</button>',
@@ -102,7 +104,7 @@
         window.operateEvents = {
                     'click .Cut': function (e, value, row, index) {
                         //alert(row.ip);
-                        var btn = $(this).button('loading');
+                        var btn = $(this).button('断网10分钟！');
                         $.post("{{ url_for('cut') }}",{ip:row.ip,mac:row.mac},function (result) {
                                 console.log(result)
                                 btn.button("reset")
@@ -164,7 +166,7 @@
 
 
 <input checked data-toggle="toggle" type="checkbox">
-
+<input type="checkbox" name="my-checkbox" checked>
     <table id="hosts">
     <thead>
       <tr>
@@ -174,9 +176,10 @@
       </tr>
     </thead>
     </table>
-
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-table.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-table-zh-CN.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-toggle.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
+
 
 {% endblock %}

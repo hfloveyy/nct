@@ -47,7 +47,6 @@ def cut_it(ip,mac):
 @celery.task
 def listening(ip,mac,status):
     ret = nct.listen(ip, mac)
-    print ret
     if ret:
         socketio.emit(
             'status', {'start': 'true'},namespace='/listen'
@@ -62,6 +61,11 @@ def listening(ip,mac,status):
 
 def write_policy(ip,mac):
     return nct.policy(ip,mac)
+
+
+@celery.task
+def test():
+    nct.test()
 
 
 

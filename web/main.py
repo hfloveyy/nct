@@ -14,7 +14,7 @@ celery = Celery('core',include='core.tasks')
 
 celery.conf.update(app.config)
 
-from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy
+from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,test
 
 
 
@@ -29,6 +29,7 @@ from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy
 
 @app.route('/')
 def index():
+    test.delay()
     refresh_list.delay()
     #new_host_up.delay()
     return render_template('index.html')
@@ -61,6 +62,7 @@ def cut():
         ip = request.values.get('ip')
         mac = request.values.get('mac')
         cut_it.delay(ip,mac)
+        #cut_it(ip,mac)
         return 'true'
 
 
@@ -80,13 +82,7 @@ def listen():
         listening.delay(ip, mac, status)
     return 'true'
 
-@socketio.on('start')
-def listen_result(json):
-    print 'aaaa'
 
-    print json.start
-    print 'aaaa'
-    return json.start
 
 
 

