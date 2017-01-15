@@ -51,24 +51,43 @@ def new():
 
 @app.route('/newone')
 def newone():
-    return render_template('index.html')
+    return 'newone'
 
 
 
-@app.route('/cut')
+@app.route('/cut',methods=['POST'])
 def cut():
-    cut_it.delay()
-    return render_template('index.html')
+    if request.method == 'POST':
+        ip = request.values.get('ip')
+        mac = request.values.get('mac')
+        cut_it.delay(ip,mac)
+        return 'true'
+
+
 
 @app.route('/listen',methods=['POST'])
+
 def listen():
     if request.method == 'POST':
         ip = request.values.get('ip')
-        value = listening.delay(ip)
-        if value.get():
-            return 'true'
+        mac = request.values.get('mac')
+        start = request.values.get('start')
+        if start == 'start':
+            status = 'true'
         else:
-            return 'false'
+            status = 'false'
+        #value = listening.delay(ip,mac)
+        listening.delay(ip, mac, status)
+    return 'true'
+
+@socketio.on('start')
+def listen_result(json):
+    print 'aaaa'
+
+    print json.start
+    print 'aaaa'
+    return json.start
+
 
 
 

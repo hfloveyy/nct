@@ -539,7 +539,7 @@ iface:    listen answers only on the given interface"""
 
 @conf.commands.register
 def sniff(count=0, store=1, offline=None, prn = None, lfilter=None, L2socket=None, timeout=None,
-          opened_socket=None, stop_filter=None, *arg, **karg):
+          opened_socket=None, stop_filter=None, stopper=None, stopper_timeout=None,*arg, **karg):
     """Sniff packets
 sniff([count=0,] [prn=None,] [store=1,] [offline=None,] [lfilter=None,] + L2ListenSocket args) -> list of packets
 
@@ -558,9 +558,14 @@ opened_socket: provide an object ready to use .recv() on
 stop_filter: python function applied to each packet to determine
              if we have to stop the capture after this packet
              ex: stop_filter = lambda x: x.haslayer(TCP)
+stopper: python function returning True or False to stop the sniffing process
+
+stopper_timeout: break the select to check the returned value of
+
+         stopper() and stop sniffing if needed (select timeout)
+
     """
     c = 0
-    
     if opened_socket is not None:
         s = opened_socket
     else:
@@ -575,13 +580,33 @@ stop_filter: python function applied to each packet to determine
     if timeout is not None:
         stoptime = time.time()+timeout
     remain = None
+    if stopper_timeout is not None:
+        stopper_stoptime = time.time()+stopper_timeout
+    stopper_remain = None
+
     try:
         while 1:
             if timeout is not None:
                 remain = stoptime-time.time()
                 if remain <= 0:
                     break
-            sel = select([s],[],[],remain)
+            if stopper_timeout is not None:
+                stopper_remain = stopper_stoptime - time.time()
+                if stopper_remain <= 0:
+                    if stopper and stopper():
+                        break
+                    stopper_stoptime = time.time() + stopper_timeout
+                    stopper_remain = stopper_stoptime - time.time()
+                sel = select([s], [], [], stopper_remain)
+                if s not in sel[0]:
+                    if stopper and stopper():
+                        break
+
+            else:
+                sel = select([s], [], [], remain)
+
+
+            #sel = select([s],[],[],remain)
             if s in sel[0]:
                 p = s.recv(MTU)
                 if p is None:

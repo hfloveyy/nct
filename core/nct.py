@@ -1,16 +1,24 @@
 # -*- coding:utf-8 -*-
 from scapy.all import *
-from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp
+from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp,\
+    poison_target,restore_target,poison_target2,get_mac,start_sniff
 
-from web import socketio
+from web import socketio,app
 from host import Host
 import json
 import time
-
+import os
+import sys
+import threading
+import signal
+from job import Job
 
 import logging
 logger = logging.getLogger('nct')
-
+GATEWAY = app.config['GATEWAY']
+GATEWAY_MAC = app.config['GATEWAY_MAC']
+#IP = app.config['IP']
+COUNT = app.config['PACKET_COUNT']
 
 
 
@@ -27,6 +35,7 @@ class Nct():
         self.last_packet = None
         self.hosts = []
         self.ip_format = self.ip_section[0:-1]+'0/24'
+        self.sniff_status = False
 
 
 
@@ -72,12 +81,30 @@ class Nct():
             else:
                 self.hosts.append(Host(host[0], host[1], '不在白名单中'))
                 logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
-        print len(self.hosts)
 
 
 
-    def cut_it(self):
-        print "cut it now!"
+    def cut_it(self,target_ip,target_mac):
+        conf.verb = 0
+        packet_count = 100
+        poison_thread = threading.Thread(target=poison_target2, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        poison_thread.start()
+        try:
+            print "[*] Starting sniffer for %d packets" % packet_count
+
+            bpf_filter = "ip host %s " % target_ip  # 过滤器
+            packets = sniff(count=packet_count, filter=bpf_filter)
+
+            # 将捕获到的数据包输出到文件
+
+            wrpcap('cut.pcap', packets)
+            # 还原网络配置
+            restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            return True
+        except KeyboardInterrupt:
+            # 还原网络配置
+            restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            return False
 
     def packet_callback(self,packet):
         if self.last_packet is None:
@@ -96,13 +123,13 @@ class Nct():
                 if rules_dict.has_key(packet[ARP].hwsrc):
                     if rules_dict[packet[ARP].hwsrc] == packet[ARP].psrc:
                         self.hosts.append(Host(ip,mac,'在白名单中'))
-                        logger.info("2. host {0} in rules. mac:{1}!".format(packet[ARP].psrc, packet[ARP].hwsrc))
+                        #logger.info("2. host {0} in rules. mac:{1}!".format(packet[ARP].psrc, packet[ARP].hwsrc))
                     else:
                         self.hosts.append(Host(ip, mac, '与白名单不符'))
-                        logger.info("2. host {0} have a wrong ip:{1}!".format(packet[ARP].hwsrc, packet[ARP].psrc))
+                        #logger.info("2. host {0} have a wrong ip:{1}!".format(packet[ARP].hwsrc, packet[ARP].psrc))
                 else:
                     self.hosts.append(Host(ip, mac, '不在白名单中'))
-                    logger.info("2. host {0} is not in rules ,ip is {1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
+                    #logger.info("2. host {0} is not in rules ,ip is {1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
                 socketio.emit(
                     'new_host_up', {'ip': packet[ARP].psrc, 'mac': packet[ARP].hwsrc,'status':self.hosts[-1].cut}, namespace='/newone'
                 )
@@ -117,13 +144,42 @@ class Nct():
         start_sniff_arp(self.packet_callback,self.ip_format)
 
 
-    def listen(self,host_ip):
-        packets = sniff(filter="ip host {0}".format(host_ip), count=10)
-        print len(packets[IP])
-        if len(packets[IP])>0:
-            wrpcap('listen_data.pcap',packets)
+    def stop_sniff(self):
+        print 'call stopper'
+        if self.sniff_status:
+            print 'true for stopper'
             return True
         return False
+
+
+    def listen(self,target_ip,target_mac):
+        #conf.verb = 0
+        GATEWAY_MAC = get_mac(GATEWAY)
+        print GATEWAY
+        print GATEWAY_MAC
+        print target_ip
+        print target_mac
+        packet_count = COUNT
+        poison_thread = Job(target=poison_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        poison_thread.start()
+        try:
+            print "[*] Starting sniffer for %d packets" % packet_count
+
+            bpf_filter = "ip host %s " % target_ip  # 过滤器
+            #sniff_thread = Job(target=start_sniff,args=(packet_count,bpf_filter))
+            #sniff_thread.start()
+            packets = sniff(count=packet_count, filter=bpf_filter)#,stopper = self.stop_sniff(),stopper_timeout=1)
+
+            # 将捕获到的数据包输出到文件
+            poison_thread.stop()
+            wrpcap('listen_data.pcap', packets)
+            # 还原网络配置
+            restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            return True
+        except KeyboardInterrupt:
+            # 还原网络配置
+            restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            return False
 
     def policy(self,host_ip,host_mac):
         new_policy = None
@@ -143,7 +199,11 @@ class Nct():
 
 
 if __name__ == '__main__':
-    pass
-    #nct = Nct("192.168.1.*")
+
+    nct = Nct("10.2.10.*")
+    threading.Thread(target=nct.listen('10.2.10.251','e0:cb:4e:12:66:73')).start()
+    time.sleep(10)
+    print 'stopping'
+    nct.sniff_status = True
     #list = nct.refresh_list()
     #nct.start_service()

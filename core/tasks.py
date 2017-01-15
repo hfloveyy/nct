@@ -25,7 +25,6 @@ def refresh_list():
     host_list = nct.refresh_list()
     for host in host_list:
         data.append({'ip':host.ip,'mac':host.mac,'status':host.cut})
-    print data[0]['ip']
     socketio.emit(
         'list', data, namespace='/refresh'
     )
@@ -42,12 +41,23 @@ def new_host_up():
 
 @celery.task
 def cut_it(ip,mac):
-    nct.cut_it()
+    nct.cut_it(ip,mac)
 
 
 @celery.task
-def listening(ip):
-    return nct.listen(ip)
+def listening(ip,mac,status):
+    ret = nct.listen(ip, mac)
+    print ret
+    if ret:
+        socketio.emit(
+            'status', {'start': 'true'},namespace='/listen'
+        )
+    else:
+        socketio.emit(
+            'status', {'start': 'false'},namespace='/listen'
+        )
+
+
 
 
 def write_policy(ip,mac):
