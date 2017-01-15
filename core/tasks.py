@@ -56,6 +56,9 @@ def listening(ip,mac,status):
             'status', {'start': 'false'},namespace='/listen'
         )
 
+@celery.task
+def test_it():
+    nct.test()
 
 
 
@@ -63,9 +66,7 @@ def write_policy(ip,mac):
     return nct.policy(ip,mac)
 
 
-@celery.task
-def test():
-    nct.test()
+
 
 
 

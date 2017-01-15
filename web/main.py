@@ -8,13 +8,12 @@ from web import socketio
 from celery import Celery
 
 
-
 celery = Celery('core',include='core.tasks')
 
 
 celery.conf.update(app.config)
 
-from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,test
+from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,test_it
 
 
 
@@ -29,7 +28,9 @@ from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,te
 
 @app.route('/')
 def index():
-    test.delay()
+    ret = test_it.delay()
+    celery.control.broadcast('pool_restart', {'modules': ['core.tasks']})
+    #ret.revoke()
     refresh_list.delay()
     #new_host_up.delay()
     return render_template('index.html')
@@ -82,7 +83,10 @@ def listen():
         listening.delay(ip, mac, status)
     return 'true'
 
-
+@app.route('/test')
+def test():
+    test_it.delay()
+    return 'true'
 
 
 

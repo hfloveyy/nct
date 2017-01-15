@@ -87,6 +87,7 @@ class Nct():
     def cut_it(self,target_ip,target_mac):
         #conf.verb = 0
         cut_thread = Job(target=cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        cut_thread.setDaemon(True)
         cut_thread.start()
         try:
             print "[*] Starting attack  {} mac:{}".format(target_ip,target_mac)
@@ -186,23 +187,29 @@ class Nct():
             value = True
         return value
 
-    def mythread(self):
-        while True:
-            print time.time()
-            time.sleep(2)
-    def test(self):
-        t = Job(target=self.mythread())
-        #t.setDaemon(True)
-        t.join()
-        t.start()
-        time.sleep(10)
-        t.stop()
 
+
+    def test(self):
+        t = Job(target=self.mythread,args=(1,2))
+        t.setDaemon(True)
+        #t.join()
+        t.start()
+        print 'here'
+        time.sleep(5)
+        print t
+        t.stop()
+        #os.kill(os.getpid(), signal.SIGINT)
+
+    def mythread(self,a,b):
+        while True:
+            print 'mythread'
+            #print time.time()
+            time.sleep(1)
 
 if __name__ == '__main__':
-
     nct = Nct()
     #nct.cut_it('192.168.1.101','64:9a:be:8d:d7:24')
-    nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
+    #nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
     #list = nct.refresh_list()
     #nct.start_service()
+    nct.test()

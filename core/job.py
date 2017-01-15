@@ -41,7 +41,16 @@ class Job(threading.Thread):
         self.__running.clear()        # 设置为False
 
 
+def func(a,b):
+    while True:
+        print time.time()
+        time.sleep(1)
 
-
-    #list = nct.refresh_list()
-    #nct.start_service()
+if __name__ == '__main__':
+    t = Job(target=func,args=(1,2))
+    t.setDaemon(True)
+    t.start()
+    print 'here'
+    time.sleep(5)
+    print time.time()
+    t.stop()

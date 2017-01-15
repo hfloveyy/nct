@@ -89,7 +89,7 @@ def restore_target(gateway_ip, gateway_mac, target_ip, target_mac):
 
     # 发出退出信号到主线程
     #os.kill(os.getpid(), signal.SIGKILL)
-    os.kill(os.getpid(), signal.SIGINT)
+    #os.kill(os.getpid(), signal.SIGINT)
 
 def get_mac(ip_address):
 
