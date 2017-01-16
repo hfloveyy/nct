@@ -13,7 +13,7 @@ celery = Celery('core',include='core.tasks')
 
 celery.conf.update(app.config)
 
-from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,test_it
+from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy
 
 
 
@@ -28,11 +28,7 @@ from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,te
 
 @app.route('/')
 def index():
-    ret = test_it.delay()
-    celery.control.broadcast('pool_restart', {'modules': ['core.tasks']})
-    #ret.revoke()
     refresh_list.delay()
-    #new_host_up.delay()
     return render_template('index.html')
 
 
@@ -42,7 +38,7 @@ def index():
 @app.route('/refresh')
 def refresh():
     refresh_list.delay()
-    return render_template('index.html')
+    return redirect(url_for("index"))
 
 
 
@@ -62,9 +58,13 @@ def cut():
     if request.method == 'POST':
         ip = request.values.get('ip')
         mac = request.values.get('mac')
+        start = request.values.get('start')
+        if start == 'OUT':
+            status = 'true'
+        else:
+            status = 'false'
         cut_it.delay(ip,mac)
-        #cut_it(ip,mac)
-        return 'true'
+    return 'true'
 
 
 
@@ -79,13 +79,7 @@ def listen():
             status = 'true'
         else:
             status = 'false'
-        #value = listening.delay(ip,mac)
         listening.delay(ip, mac, status)
-    return 'true'
-
-@app.route('/test')
-def test():
-    test_it.delay()
     return 'true'
 
 

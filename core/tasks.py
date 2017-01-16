@@ -41,8 +41,15 @@ def new_host_up():
 
 @celery.task
 def cut_it(ip,mac):
-    nct.cut_it(ip,mac)
-
+    ret = nct.cut_it(ip,mac)
+    if ret:
+        socketio.emit(
+            'status', {'start': 'true'},namespace='/cut'
+        )
+    else:
+        socketio.emit(
+            'status', {'start': 'false'},namespace='/cut'
+        )
 
 @celery.task
 def listening(ip,mac,status):
@@ -56,9 +63,7 @@ def listening(ip,mac,status):
             'status', {'start': 'false'},namespace='/listen'
         )
 
-@celery.task
-def test_it():
-    nct.test()
+
 
 
 

@@ -9,8 +9,6 @@ class Job(threading.Thread):
 
     #def __init__(self,*args, **kwargs):
     def __init__(self,*args,**kwargs):
-        print args
-        print kwargs
         super(Job, self).__init__(*args, **kwargs)
         self.__flag = threading.Event()     # 用于暂停线程的标识
         self.__flag.set()       # 设置为True
@@ -36,7 +34,7 @@ class Job(threading.Thread):
 
     def stop(self):
         print time.time()
-        print 'stop'
+        print 'stop thread!'
         self.__flag.set()       # 将线程从暂停状态恢复, 如何已经暂停的话
         self.__running.clear()        # 设置为False
 
