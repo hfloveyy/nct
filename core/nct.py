@@ -264,7 +264,8 @@ class Nct():
 
 
 if __name__ == '__main__':
-    nct = Nct()
+    pass
+    #nct = Nct()
     #nct.cut_it('192.168.1.101','64:9a:be:8d:d7:24')
     #nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
     #list = nct.refresh_list()

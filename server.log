@@ -1,43 +1,42 @@
-Mon, 16 Jan 2017 11:04:35 server.py[line:111] INFO Server initialized for eventlet.
-Mon, 16 Jan 2017 11:04:35 error.py[line:59] WARNING No route found for IPv6 destination :: (no default route?)
-Mon, 16 Jan 2017 11:04:35 _internal.py[line:87] WARNING  * Debugger is active!
-Mon, 16 Jan 2017 11:04:35 _internal.py[line:87] INFO  * Debugger pin code: 311-664-442
-Mon, 16 Jan 2017 11:04:37 connection.py[line:350] DEBUG Start from server, version: 0.9, properties: {'information': 'Licensed under the MPL.  See http://www.rabbitmq.com/', 'product': 'RabbitMQ', 'copyright': 'Copyright (C) 2007-2015 Pivotal Software, Inc.', 'capabilities': {'exchange_exchange_bindings': True, 'connection.blocked': True, 'authentication_failure_close': True, 'basic.nack': True, 'per_consumer_qos': True, 'consumer_priorities': True, 'consumer_cancel_notify': True, 'publisher_confirms': True}, 'cluster_name': 'rabbit@hf', 'platform': 'Erlang/OTP', 'version': '3.5.7'}, mechanisms: [u'AMQPLAIN', u'PLAIN'], locales: [u'en_US']
-Mon, 16 Jan 2017 11:04:37 channel.py[line:122] DEBUG using channel_id: 1
-Mon, 16 Jan 2017 11:04:37 channel.py[line:459] DEBUG Channel open
-Mon, 16 Jan 2017 11:04:37 pubsub_manager.py[line:37] INFO redis backend initialized.
-Mon, 16 Jan 2017 11:04:37 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '9fd30417dfa54b0185ac017ea70ca798'}
-Mon, 16 Jan 2017 11:04:37 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet MESSAGE data 0
-Mon, 16 Jan 2017 11:04:37 socket.py[line:44] INFO 9fd30417dfa54b0185ac017ea70ca798: Received packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:04:37 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:04:37 socket.py[line:44] INFO 9fd30417dfa54b0185ac017ea70ca798: Received packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:04:37 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:04:37 socket.py[line:79] INFO 9fd30417dfa54b0185ac017ea70ca798: Received request to upgrade to websocket
-Mon, 16 Jan 2017 11:04:37 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet NOOP data None
-Mon, 16 Jan 2017 11:04:37 socket.py[line:174] INFO 9fd30417dfa54b0185ac017ea70ca798: Upgrade to websocket successful
-Mon, 16 Jan 2017 11:05:02 socket.py[line:44] INFO 9fd30417dfa54b0185ac017ea70ca798: Received packet PING data None
-Mon, 16 Jan 2017 11:05:02 socket.py[line:69] INFO 9fd30417dfa54b0185ac017ea70ca798: Sending packet PONG data None
-Mon, 16 Jan 2017 11:05:03 socket.py[line:69] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '1fd0ca7b60ca40cfad2a6d62640ae90d'}
-Mon, 16 Jan 2017 11:05:03 socket.py[line:69] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Sending packet MESSAGE data 0
-Mon, 16 Jan 2017 11:05:03 socket.py[line:44] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Received packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:05:03 socket.py[line:69] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Sending packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:05:03 socket.py[line:44] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Received packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:05:03 socket.py[line:69] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Sending packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:05:03 socket.py[line:79] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Received request to upgrade to websocket
-Mon, 16 Jan 2017 11:05:03 socket.py[line:69] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Sending packet NOOP data None
-Mon, 16 Jan 2017 11:05:03 socket.py[line:174] INFO 1fd0ca7b60ca40cfad2a6d62640ae90d: Upgrade to websocket successful
-Mon, 16 Jan 2017 11:05:19 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '52955579f2614f93ba994250c5dc98c2'}
-Mon, 16 Jan 2017 11:05:19 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet MESSAGE data 0
-Mon, 16 Jan 2017 11:05:19 socket.py[line:44] INFO 52955579f2614f93ba994250c5dc98c2: Received packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:05:19 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet MESSAGE data 0/newone
-Mon, 16 Jan 2017 11:05:19 socket.py[line:44] INFO 52955579f2614f93ba994250c5dc98c2: Received packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:05:19 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet MESSAGE data 0/refresh
-Mon, 16 Jan 2017 11:05:19 socket.py[line:79] INFO 52955579f2614f93ba994250c5dc98c2: Received request to upgrade to websocket
-Mon, 16 Jan 2017 11:05:19 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet NOOP data None
-Mon, 16 Jan 2017 11:05:19 socket.py[line:174] INFO 52955579f2614f93ba994250c5dc98c2: Upgrade to websocket successful
-Mon, 16 Jan 2017 11:05:44 socket.py[line:44] INFO 52955579f2614f93ba994250c5dc98c2: Received packet PING data None
-Mon, 16 Jan 2017 11:05:44 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet PONG data None
-Mon, 16 Jan 2017 11:06:09 socket.py[line:44] INFO 52955579f2614f93ba994250c5dc98c2: Received packet PING data None
-Mon, 16 Jan 2017 11:06:09 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet PONG data None
-Mon, 16 Jan 2017 11:06:34 socket.py[line:44] INFO 52955579f2614f93ba994250c5dc98c2: Received packet PING data None
-Mon, 16 Jan 2017 11:06:34 socket.py[line:69] INFO 52955579f2614f93ba994250c5dc98c2: Sending packet PONG data None
+Tue, 17 Jan 2017 09:11:37 server.py[line:111] INFO Server initialized for eventlet.
+Tue, 17 Jan 2017 09:11:37 error.py[line:59] WARNING No route found for IPv6 destination :: (no default route?)
+Tue, 17 Jan 2017 09:11:38 _internal.py[line:87] WARNING  * Debugger is active!
+Tue, 17 Jan 2017 09:11:38 _internal.py[line:87] INFO  * Debugger pin code: 282-362-590
+Tue, 17 Jan 2017 09:11:41 connection.py[line:350] DEBUG Start from server, version: 0.9, properties: {'information': 'Licensed under the MPL.  See http://www.rabbitmq.com/', 'product': 'RabbitMQ', 'copyright': 'Copyright (C) 2007-2015 Pivotal Software, Inc.', 'capabilities': {'exchange_exchange_bindings': True, 'connection.blocked': True, 'authentication_failure_close': True, 'basic.nack': True, 'per_consumer_qos': True, 'consumer_priorities': True, 'consumer_cancel_notify': True, 'publisher_confirms': True}, 'cluster_name': 'rabbit@hf', 'platform': 'Erlang/OTP', 'version': '3.5.7'}, mechanisms: [u'AMQPLAIN', u'PLAIN'], locales: [u'en_US']
+Tue, 17 Jan 2017 09:11:41 channel.py[line:122] DEBUG using channel_id: 1
+Tue, 17 Jan 2017 09:11:41 channel.py[line:459] DEBUG Channel open
+Tue, 17 Jan 2017 09:11:43 pubsub_manager.py[line:37] INFO redis backend initialized.
+Tue, 17 Jan 2017 09:11:43 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '371932de40a0486baa5a3b75e7d8f785'}
+Tue, 17 Jan 2017 09:11:43 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 0
+Tue, 17 Jan 2017 09:11:43 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet MESSAGE data 0/newone
+Tue, 17 Jan 2017 09:11:43 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 0/newone
+Tue, 17 Jan 2017 09:11:44 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet MESSAGE data 0/refresh
+Tue, 17 Jan 2017 09:11:44 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 0/refresh
+Tue, 17 Jan 2017 09:11:44 socket.py[line:79] INFO 371932de40a0486baa5a3b75e7d8f785: Received request to upgrade to websocket
+Tue, 17 Jan 2017 09:11:44 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet NOOP data None
+Tue, 17 Jan 2017 09:11:44 socket.py[line:174] INFO 371932de40a0486baa5a3b75e7d8f785: Upgrade to websocket successful
+Tue, 17 Jan 2017 09:11:44 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/refresh,["list",[{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"}]]
+Tue, 17 Jan 2017 09:11:46 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/refresh,["list",[{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"}]]
+Tue, 17 Jan 2017 09:12:08 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet PING data None
+Tue, 17 Jan 2017 09:12:08 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet PONG data None
+Tue, 17 Jan 2017 09:12:14 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/newone,["new_host_up",{"status":"\u4e0d\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.108","mac":"ac:e0:10:14:06:17"}]
+Tue, 17 Jan 2017 09:12:15 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/newone,["new_host_up",{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.101","mac":"64:9a:be:8d:d7:24"}]
+Tue, 17 Jan 2017 09:12:17 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/newone,["new_host_up",{"status":"\u4e0d\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.130","mac":"ac:e0:10:14:06:17"}]
+Tue, 17 Jan 2017 09:12:33 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet PING data None
+Tue, 17 Jan 2017 09:12:33 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet PONG data None
+Tue, 17 Jan 2017 09:12:58 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet PING data None
+Tue, 17 Jan 2017 09:12:58 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet PONG data None
+Tue, 17 Jan 2017 09:13:23 socket.py[line:44] INFO 371932de40a0486baa5a3b75e7d8f785: Received packet PING data None
+Tue, 17 Jan 2017 09:13:23 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet PONG data None
+Tue, 17 Jan 2017 09:13:36 socket.py[line:69] INFO 371932de40a0486baa5a3b75e7d8f785: Sending packet MESSAGE data 2/refresh,["list",[{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"},{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.101","mac":"64:9a:be:8d:d7:24"}]]
+Tue, 17 Jan 2017 09:13:46 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet OPEN data {'pingInterval': 25000, 'pingTimeout': 60000, 'upgrades': ['websocket'], 'sid': '9cb29e2b9eb543c7bf12a1050e7786cc'}
+Tue, 17 Jan 2017 09:13:46 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet MESSAGE data 0
+Tue, 17 Jan 2017 09:13:46 socket.py[line:44] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Received packet MESSAGE data 0/newone
+Tue, 17 Jan 2017 09:13:46 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet MESSAGE data 0/newone
+Tue, 17 Jan 2017 09:13:46 socket.py[line:44] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Received packet MESSAGE data 0/refresh
+Tue, 17 Jan 2017 09:13:46 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet MESSAGE data 0/refresh
+Tue, 17 Jan 2017 09:13:46 socket.py[line:79] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Received request to upgrade to websocket
+Tue, 17 Jan 2017 09:13:46 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet NOOP data None
+Tue, 17 Jan 2017 09:13:46 socket.py[line:174] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Upgrade to websocket successful
+Tue, 17 Jan 2017 09:13:48 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet MESSAGE data 2/refresh,["list",[{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"},{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.101","mac":"64:9a:be:8d:d7:24"}]]
+Tue, 17 Jan 2017 09:13:49 socket.py[line:69] INFO 9cb29e2b9eb543c7bf12a1050e7786cc: Sending packet MESSAGE data 2/refresh,["list",[{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.1","mac":"bc:46:99:2a:90:ee"},{"status":"\u5728\u767d\u540d\u5355\u4e2d","ip":"192.168.0.101","mac":"64:9a:be:8d:d7:24"}]]

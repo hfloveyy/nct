@@ -5,14 +5,14 @@ import logging
 
 from web import app
 from web import socketio
-from celery import Celery
+from celery import Celery,platforms
 
 
 celery = Celery('core',include='core.tasks')
 
 
 celery.conf.update(app.config)
-
+platforms.C_FORCE_ROOT = True
 from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy
 
 
@@ -38,14 +38,14 @@ def index():
 @app.route('/refresh')
 def refresh():
     refresh_list.delay()
-    return redirect(url_for("index"))
+    return 'true'
 
 
 
 @app.route('/new')
 def new():
     new_host_up.delay()
-    return redirect(url_for("index"))
+    return 'true'
 
 @app.route('/newone')
 def newone():
