@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 BROKER_URL = 'amqp://hf:110@localhost:5672/web'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'

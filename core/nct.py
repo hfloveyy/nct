@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 from scapy.all import *
 from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp,\

@@ -1,12 +1,15 @@
-#IP_SECTION = "10.2.10.*"
-#GATEWAY = "10.2.10.254"
-#GATEWAY_MAC = ""
+#!/usr/bin/env python
 
+IP = "10.2.10.250"
+IP_SECTION = "10.2.10.*"
+GATEWAY = "10.2.10.254"
+GATEWAY_MAC = "38:97:d6:10:07:93"
+'''
 IP = "192.168.0.130"
 IP_SECTION = "192.168.0.*"
 GATEWAY = "192.168.0.1"
 GATEWAY_MAC = "bc:46:99:2a:90:ee"
-
+'''
 
 '''
 IP = "192.168.1.130"
