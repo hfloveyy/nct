@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-from flask import render_template,request,redirect,url_for
-import logging
+from flask import render_template,request
+
 
 
 from web import app
-from web import socketio
+
 from celery import Celery,platforms
 
 

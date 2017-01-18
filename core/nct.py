@@ -15,6 +15,7 @@ from job import Job
 
 import logging
 logger = logging.getLogger('nct')
+IP_SECTION = app.config['IP_SECTION']
 GATEWAY = app.config['GATEWAY']
 GATEWAY_MAC = app.config['GATEWAY_MAC']
 #IP = app.config['IP']
@@ -48,10 +49,8 @@ class Nct():
 
 
     def refresh_list(self):
-        #self.host_list,self.ip_list,self.mac_list = active_host(self.ip_section)
         self.host_list= active_host(self.ip_section)
         self.get_host_after_rules()
-        #return self.host_list,self.ip_list,self.mac_list
         return self.hosts
 
     def get_hostname_list(self):
@@ -261,12 +260,13 @@ class Nct():
 
 
 
+nct = Nct(IP_SECTION)
 
-
-
+'''
 if __name__ == '__main__':
     pass
     #nct = Nct()
     #nct.cut_it('192.168.1.101','64:9a:be:8d:d7:24')
     #nct.listen('192.168.1.101','64:9a:be:8d:d7:24')
     #list = nct.refresh_list()
+'''

@@ -4,24 +4,15 @@ from scapy.all import *
 import socket
 import json
 import random
-import os
 import sys
-import threading
-import signal
 from job import Job
-
 global mode
 
 
 #scan active host
 def active_host(ip_section):
     host_list = my_arping(ip_section)
-    #ip_list = [x[0] for x in host_list]
-    #mac_list = [x[1] for x in host_list]
-    #print ip_list
-    #print '*'*10
-    #print mac_list
-    return host_list#,ip_list,mac_list
+    return host_list
 
 
 
@@ -38,7 +29,6 @@ def my_arping(net, timeout=2, cache=0, verbose=None, **kargs):
     for s, r in ans.res:
         ip = r.sprintf("%ARP.psrc%")
         mac = r.sprintf("%Ether.src%")
-        #print ip+':'+mac
         host_list.append((ip,mac))
     return host_list
 
@@ -53,11 +43,7 @@ def get_hostname_by_ip(ipaddr):
 
 def load_rules(filename):
     with open(filename,"r") as f:
-    #    input = f.read()
         rules = json.load(f)
-    #print rules
-    #print type(rules)
-    #print input[0]['ip']
     return rules
 
 def tcp_syn_flood(ip,dPort):
@@ -174,21 +160,3 @@ if __name__ == "__main__":
         # 还原网络配置
         restore_target(gateway_ip, gateway_mac, target_ip, target_mac)
     sys.exit(0)
-    #ans = active_host("10.2.10.*")
-    #ans = active_host("192.168.0.*")
-    #host_list = my_arping("192.168.1.*")
-
-    #print host_list
-
-    #host_list2 = active_host("192.168.1.*")
-
-    #print host_list2
-
-    #print get_hostname_by_ip("192.168.1.101")
-    #for s, r in ans.res:
-    #    print r.sprintf("%19s,Ether.src% %ARP.psrc%")
-    #load_rules('../config/rules.json')
-    #print ans2
-    #print ans3
-    #start_sniff(packet)
-    #tcp_syn_flood('192.168.0.101',80)
