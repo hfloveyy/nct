@@ -20,4 +20,4 @@ GATEWAY_MAC = "78:a1:06:95:c1:8e"
 PACKET_COUNT = 10 #监听数据包数量
 
 
-TIME = 1*60 #断网时间
+TIME = 1*60*5 #断网时间
