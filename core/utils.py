@@ -88,6 +88,11 @@ def get_mac(ip_address):
     return None
 
 
+def set_ip_forwarding(value):
+    with open('/proc/sys/net/ipv4/ip_forward', 'w') as file:
+        file.write(str(value))
+        file.close()
+
 
 
 

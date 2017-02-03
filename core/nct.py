@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 from scapy.all import *
 from utils import active_host, get_hostname_by_ip, load_rules,start_sniff_arp,\
-    restore_target,get_mac
+    restore_target,get_mac,set_ip_forwarding
 
 from web import socketio,app
 from host import Host
@@ -212,6 +212,7 @@ class Nct():
         return
 
     def listen(self,target_ip,target_mac):
+        set_ip_forwarding(1)
         conf.verb = 0
         GATEWAY_MAC = get_mac(GATEWAY)
         packet_count = COUNT
@@ -236,11 +237,13 @@ class Nct():
             wrpcap('{}.pcap'.format(target_ip), packets)
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            set_ip_forwarding(0)
             return True
         except Exception,e:
             print e
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
+            set_ip_forwarding(0)
             return False
 
     def policy(self,host_ip,host_mac):
