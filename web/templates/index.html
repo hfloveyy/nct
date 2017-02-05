@@ -38,7 +38,17 @@
                 });
 
             });
-
+            $(document).ready(function(){
+                $('#mode1').click(function () {
+                    console.log('click button group'+$(this).text())
+                });
+                $('#mode2').click(function () {
+                    console.log('click button group'+$(this).text())
+                });
+                $('#mode3').click(function () {
+                    console.log('click button group'+$(this).text())
+                });
+            });
 
     </script>
     <script type="text/javascript">
@@ -191,8 +201,14 @@
 
 <div>
     <!--<div><h3><span class="label label-primary">启动主机发现</span></h3></div>-->
-<div><input  data-toggle="toggle" type="checkbox" id = "startsniff"></div>
-</div>
+    <div><input  data-toggle="toggle" type="checkbox" id = "startsniff"></div>
+    </div>
+
+    <div id="mode" class="btn-group" role="group" aria-label="...">
+        <button id="mode1" type="button" class="btn btn-info">自由模式</button>
+        <button id="mode2" type="button" class="btn btn-primary">规则模式</button>
+        <button id="mode3" type="button" class="btn btn-danger">限制模式</button>
+    </div>
     <table id="hosts">
     <thead>
       <tr>

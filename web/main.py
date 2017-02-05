@@ -97,6 +97,14 @@ def policy():
         else:
             return 'false'
 
+@app.route('/mode',methods=['POST'])
+def mode():
+    if request.method == 'POST':
+        mode = request.values.get('mode')
+        #start_mode(mode)
+        print mode
+    return 'true'
+
 
 
 

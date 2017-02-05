@@ -45,7 +45,7 @@ class Nct():
 
     def get_host_list(self):
         self.get_host_after_rules()
-        return self.host_list
+        return self.hosts
 
 
     def refresh_list(self):
@@ -74,15 +74,18 @@ class Nct():
         for host in self.host_list:
             if rules_dict.has_key(host[1]) or host[0] in rules_dict.values():
                 if rules_dict[host[1]] == host[0] :
-                    logger.info("ip: {0} match right mac:{1}!".format(host[0],host[1]))
+                    #logger.info("ip: {0} match right mac:{1}!".format(host[0],host[1]))
                     self.hosts.append(Host(host[0],host[1],'在白名单中'))
                 else:
                     self.hosts.append(Host(host[0], host[1], '与白名单不符'))
-                    logger.info("ip: {0} match wrong mac:{1}!".format(host[0],host[1]))
+                    #logger.info("ip: {0} match wrong mac:{1}!".format(host[0],host[1]))
             else:
                 self.hosts.append(Host(host[0], host[1], '不在白名单中'))
-                logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
+                #logger.info("ip {0}: is not in rules ,ip is {1}".format(host[0],host[1]))
 
+    '''
+    断网线程
+    '''
     def cut_target(self,gateway_ip, gateway_mac, target_ip, target_mac):
         WRONG_MAC = "11:11:11:22:22:22"
         # 构建欺骗目标的ARP请求()，这里没设置hwsrc,默认就是本机咯
@@ -117,7 +120,9 @@ class Nct():
         print "[*] ARP poison attack finished"
         return
 
-
+    '''
+    断网
+    '''
     def cut_it(self,target_ip,target_mac):
         global LOCK_CUT
         LOCK_CUT = True
@@ -142,6 +147,9 @@ class Nct():
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return False
 
+    '''
+    数据包回调
+    '''
     def packet_callback(self,packet):
         if self.last_packet is None:
             self.last_packet = packet
@@ -162,6 +170,7 @@ class Nct():
                         #logger.info("2. host {0} in rules. mac:{1}!".format(packet[ARP].psrc, packet[ARP].hwsrc))
                     else:
                         self.hosts.append(Host(ip, mac, '与白名单不符'))
+                        self.cut_it(ip,mac)
                         #logger.info("2. host {0} have a wrong ip:{1}!".format(packet[ARP].hwsrc, packet[ARP].psrc))
                 else:
                     self.hosts.append(Host(ip, mac, '不在白名单中'))
@@ -175,7 +184,9 @@ class Nct():
             #logger.info("drop the packet mac:{0} ip:{1}".format(packet[ARP].hwsrc, packet[ARP].psrc))
         self.last_packet = packet
 
-
+    '''
+    开启嗅探
+    '''
     def start_service(self):
         start_sniff_arp(self.packet_callback,self.ip_format)
 
@@ -254,6 +265,8 @@ class Nct():
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return False
 
+
+    #写入规则
     def policy(self,host_ip,host_mac):
         new_policy = None
         value = False
@@ -267,6 +280,32 @@ class Nct():
             json.dump(new_policy,f)
             value = True
         return value
+
+    def mode(self,mode):
+        if self.hosts is None:self.refresh_list()
+        # 自由模式
+        if mode == 1:
+            for host in self.hosts:
+                if host.cut == '不在白名单中':
+                    logger.info("ip {0}: is not in rules ,mac is {1}".format(host.ip, host.mac))
+                elif host.cut == '与白名单不符':
+                    logger.warning("ip: {0} match wrong mac:{1}!".format(host.ip, host.mac))
+        # 规则模式
+        elif mode == 2:
+            for host in self.hosts:
+                if host.cut == '不在白名单中':
+                    logger.info("ip {0}: is not in rules ,mac is {1}".format(host.ip, host.mac))
+                elif host.cut == '与白名单不符':
+                    logger.warning("CUT it!ip is {0} ,mac is {1}".format(host.ip, host.mac))
+                    self.cut_it(host.ip,host.mac)
+        # 限制模式
+        elif mode == 3:
+            for host in self.hosts:
+                if host.cut == '不在白名单中' or host.cut == '与白名单不符':
+                    logger.warning("CUT it!ip is {0} ,mac is {1}".format(host.ip, host.mac))
+                    self.cut_it(host.ip,host.mac)
+
+
 
 
 

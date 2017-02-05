@@ -54,7 +54,9 @@ def listening(ip,mac,status):
             'status', {'start': 'false'},namespace='/listen'
         )
 
-
+@celery.task
+def start_mode(mode):
+    ret = nct.mode(mode)
 
 
 
