@@ -14,7 +14,7 @@ celery = Celery('core',include='core.tasks')
 
 celery.conf.update(app.config)
 platforms.C_FORCE_ROOT = True
-from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy
+from core.tasks import refresh_list,new_host_up,cut_it,listening,write_policy,start_mode
 
 
 
@@ -101,7 +101,7 @@ def policy():
 def mode():
     if request.method == 'POST':
         mode = request.values.get('mode')
-        #start_mode(mode)
+        start_mode.delay(mode)
         print mode
     return 'true'
 

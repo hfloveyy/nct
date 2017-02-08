@@ -14,16 +14,17 @@ from job import Job
 
 
 import logging
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
 logger = logging.getLogger('nct')
 IP_SECTION = app.config['IP_SECTION']
 GATEWAY = app.config['GATEWAY']
 GATEWAY_MAC = app.config['GATEWAY_MAC']
-#IP = app.config['IP']
+IP = app.config['IP']
 COUNT = app.config['PACKET_COUNT']
 TIME = app.config['TIME']
 
 LOCK_LISTEN = True
-LOCK_CUT = True
+#LOCK_CUT = True
 
 class Nct():
     def __init__(self,ip_section = "192.168.1.*",mode = 1):
@@ -39,6 +40,7 @@ class Nct():
         self.hosts = []
         self.ip_format = self.ip_section[0:-1]+'0/24'
         self.sniff_status = False
+        self.lock_cut = True
         set_ip_forwarding(1)
 
 
@@ -106,7 +108,8 @@ class Nct():
         poison_gateway.hwsrc = WRONG_MAC
         print "[*] Beginning the ARP attack. ［CTRL_C to stop］"
 
-        while LOCK_CUT:
+        #while LOCK_CUT:
+        while self.lock_cut:
             try:
                 # 开始发送ARP欺骗包(投毒)
                 send(poison_target)
@@ -124,8 +127,9 @@ class Nct():
     断网
     '''
     def cut_it(self,target_ip,target_mac):
-        global LOCK_CUT
-        LOCK_CUT = True
+        #global LOCK_CUT
+        #LOCK_CUT = True
+        self.lock_cut = True
         conf.verb = 0
         cut_thread = Job(target=self.cut_target, args=(GATEWAY, GATEWAY_MAC, target_ip, target_mac))
         cut_thread.setDaemon(True)
@@ -135,15 +139,15 @@ class Nct():
             time.sleep(TIME)#断网十分钟
 
             #global LOCK_CUT
-            LOCK_CUT = False
+            #LOCK_CUT = False
+            self.lock_cut = False
             cut_thread.stop()
 
             # 还原网络配置
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return True
-        except KeyboardInterrupt:
+        except Exception as e:
             # 还原网络配置
-            LOCK_CUT = False
             restore_target(GATEWAY, GATEWAY_MAC, target_ip, target_mac)
             return False
 
@@ -188,8 +192,10 @@ class Nct():
     开启嗅探
     '''
     def start_service(self):
-        start_sniff_arp(self.packet_callback,self.ip_format)
-
+        try:
+            start_sniff_arp(self.packet_callback,self.ip_format)
+        except Exception as e:
+            print e
 
     def stop_sniff(self,packet):
         #packet.show()
@@ -282,19 +288,20 @@ class Nct():
         return value
 
     def mode(self,mode):
-        if self.hosts is None:self.refresh_list()
+        if not self.hosts:self.refresh_list()
+        print mode
         # 自由模式
         if mode == 1:
             for host in self.hosts:
                 if host.cut == '不在白名单中':
-                    logger.info("ip {0}: is not in rules ,mac is {1}".format(host.ip, host.mac))
+                    logger.info("ip {0}: is not in rules ,mac is {1},mode = 1".format(host.ip, host.mac))
                 elif host.cut == '与白名单不符':
-                    logger.warning("ip: {0} match wrong mac:{1}!".format(host.ip, host.mac))
+                    logger.warning("ip: {0} match wrong mac:{1}!,mode = 1".format(host.ip, host.mac))
         # 规则模式
         elif mode == 2:
             for host in self.hosts:
                 if host.cut == '不在白名单中':
-                    logger.info("ip {0}: is not in rules ,mac is {1}".format(host.ip, host.mac))
+                    logger.info("ip {0}: is not in rules ,mac is {1},mode = 2".format(host.ip, host.mac))
                 elif host.cut == '与白名单不符':
                     logger.warning("CUT it!ip is {0} ,mac is {1}".format(host.ip, host.mac))
                     self.cut_it(host.ip,host.mac)
@@ -302,8 +309,8 @@ class Nct():
         elif mode == 3:
             for host in self.hosts:
                 if host.cut == '不在白名单中' or host.cut == '与白名单不符':
-                    logger.warning("CUT it!ip is {0} ,mac is {1}".format(host.ip, host.mac))
-                    self.cut_it(host.ip,host.mac)
+                    logger.warning("CUT it!ip is {0} ,mac is {1},mode = 3".format(host.ip, host.mac))
+                    #self.cut_it(host.ip,host.mac)
 
 
 

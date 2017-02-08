@@ -40,13 +40,19 @@
             });
             $(document).ready(function(){
                 $('#mode1').click(function () {
-                    console.log('click button group'+$(this).text())
+                    $.post("{{ url_for('mode') }}",{mode:1},function(result){
+
+                        });
                 });
                 $('#mode2').click(function () {
-                    console.log('click button group'+$(this).text())
+                    $.post("{{ url_for('mode') }}",{mode:2},function(result){
+
+                        });
                 });
                 $('#mode3').click(function () {
-                    console.log('click button group'+$(this).text())
+                    $.post("{{ url_for('mode') }}",{mode:3},function(result){
+
+                        });
                 });
             });
 
